@@ -1,0 +1,9 @@
+Scenario: {{ scenario | tojson }}
+Frozen fields: {{ fields | tojson }}
+Lexicographic order component: {{ component | tojson }}
+Blocking issues: {{ issues | tojson }}
+Required component schema with legal field IDs: {{ target_schema | tojson }}
+
+For each issue naming an order_id, preserve the same three field members and make the smallest targeted repair. If the existing order is broadly reasonable but its rationale does not explain that sequence, replace only the rationale. If the three fields can coexist but the stated sequence is plainly unreasonable while another sequence of the same three fields is reasonable, reorder only those three fields and align the rationale with the corrected first-to-last order. Remove the complete order when the fields cannot coexist in a realistic decision situation or no broadly reasonable ordering of those same fields can satisfy the corrected condition.
+
+Do not replace a member with another field, add a new order, derive alternative permutations, address diversity or coverage, or modify an unrelated accepted order. Return only the smallest patch operations whose result satisfies every supplied corrected condition and the required schema.

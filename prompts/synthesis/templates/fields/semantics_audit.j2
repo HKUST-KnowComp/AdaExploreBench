@@ -1,0 +1,21 @@
+Scenario: {{ scenario | tojson }}
+Frozen field inventory: {{ field_catalog | tojson }}
+Decision semantics: {{ component | tojson }}
+Fixed rule-family meanings: {{ family_meanings | tojson }}
+
+Audit only the authored decision semantics. Return exactly one verdict per field_id plus one set verdict with component_id "__field_semantics_set__". Scenerio, field inventory and rule-family meanings are frozen, do not audit them.
+
+Every blocking issue must set `resolution` to exactly one of two values and state a testable corrected condition. Use `repair_current` when changing effect_strength, eligible_families, is_reversal, trigger, semantics_before, semantics_after, reversal_reason, or reversal_rationale can fully fix it. Use `drop_field` only when the frozen measurement itself makes valid semantics impossible; it must appear on that field's own verdict, and the pipeline discards all such fields in one batch.
+
+For each field, confirm effect_strength is within [0.1, 1.0] and verify effect_strength against the complete catalog rather than as an isolated number. Verify each eligible family against the three supplied fixed mathematical roles and rule-family descriptions.
+
+For is_reversal=true, audit the persisted event:
+- trigger must name a concrete scenario-plausible operational event or condition change; Notice that a trigger is not a generic "change" or "event" but a specific, plausible, and operationally credible event that could cause the field's pressure direction to reverse.
+- semantics_before and semantics_after must each trace the monotonic path through expected loss, deterioration, urgency, or autonomous recovery to opposite need tendencies on the unchanged action ladder; pressure direction changing from positive/negative to neutral/undefined is not a reversal;
+- semantics_before should agree with the frozen field's pressure_direction;
+- reversal_reason must explain why the regime genuinely reverses the same measurement's impact on intervention tendency.
+Reject when sign changes not because of the underlying urgency needs butonly because a chosen action becomes costlier, less attractive, congestion-producing, easier, authorized, staffed, or executable; Accept any operationally credible event regardless of rarity or asymmetry.
+
+For is_reversal=false, the rationale must explain the tested conditions change and why the field could not reverse; check if the field's pressure direction really stay stable across different scenarios, reject when the rationale contradicts the frozen measurement or the scenario clearly supports a genuine event that could reverse the field.
+
+For "__field_semantics_set__", assess whether effect strengths diverse across the [0.1, 1.0] range and stay distinguishable rather than clustering together, which means that not all value distribute within a narrow range.

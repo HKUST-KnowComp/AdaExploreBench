@@ -1,0 +1,73 @@
+model_config: configs/models/gpt-5.6-luna.yaml
+audit_model_config: configs/models/gpt-5.6-luna.yaml
+
+paths:
+  skeleton: src/synthesis/templates/domain_templates.skeleton.json
+  canonical_schema: src/synthesis/templates/domain_templates.schema.json
+  stage_schemas: prompts/synthesis/templates/schemas
+  prompts: prompts/synthesis/templates
+  canonical: datasets/templates/domain_templates.json
+  audit: datasets/templates/domain_templates.audit.json
+  manifest: datasets/templates/domain_templates.manifest.json
+  runs: outputs/template_synthesis
+
+domains:
+  finance:
+    description: Operational decision-making in financial services, treasury, transaction processing, market risk, and settlement workflows.
+  healthcare:
+    description: Operational decision-making in clinical care delivery, patient flow, laboratory processing, and healthcare resource coordination.
+  cybersecurity:
+    description: Operational decision-making in security monitoring, access control, incident response, vulnerability management, and data protection workflows.
+  manufacturing:
+    description: Operational decision-making in production, maintenance, quality control, energy management, and plant coordination workflows.
+
+scenario_batch_size: 4
+blueprint_path: configs/synthesis/task_blueprints.yaml
+minimum_reversal_fields: 10
+
+generation:
+  max_completion_tokens: 128000
+  effort: xhigh
+  output_format: json_schema
+  concurrency: 32
+  request_timeout_seconds: 1200
+  request_retry_limit: 3
+  api_mode: responses_background
+  background_poll_interval_seconds: 2
+
+audit:
+  max_completion_tokens: 128000
+  effort: xhigh
+  output_format: json_schema
+  concurrency: 24
+  request_timeout_seconds: 900
+  request_retry_limit: 3
+  api_mode: responses_background
+  background_poll_interval_seconds: 2
+
+repair:
+  max_completion_tokens: 128000
+  effort: xhigh
+  output_format: json_schema
+  concurrency: 8
+  limit: 5
+  request_timeout_seconds: 900
+  request_retry_limit: 3
+  api_mode: responses_background
+  background_poll_interval_seconds: 2
+
+batching:
+  context_window_tokens: 114688
+  safety_margin_tokens: 8192
+  max_field_audit_per_batch: 15
+  max_field_parameters_per_batch: 16
+  estimated_field_parameter_tokens: 190
+
+field_parameters:
+  beta_concentration_range: [4, 12]
+
+parse_retry_limit: 2
+catalog_set_drop_limit: 5
+semantics_drop_limit: 5
+template_retry_limit: 2
+scenario_refill_limit: 8

@@ -1,0 +1,17 @@
+provider: vertex_gemini
+conversation_protocol: gemini_generate_content
+model: gemini-3.7-flash
+concurrency: 64
+api_key_env: VERTEX_AI_API_KEY
+vertex_project_env: VERTEX_AI_PROJECT
+vertex_location_env: VERTEX_AI_LOCATION
+labels:
+  app: mpf-parser
+  env: dev
+batch_size: 16
+temperature: 0.0
+max_tokens: 32768
+output_format: json_object
+effort: high
+request_timeout_seconds: 300
+request_retry_limit: 2

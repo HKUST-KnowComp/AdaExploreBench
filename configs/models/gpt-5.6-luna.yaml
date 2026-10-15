@@ -1,0 +1,14 @@
+provider: openai_compat
+conversation_protocol: openai_responses
+model: gpt-5.6-luna
+concurrency: 128
+base_url_env: OPENAI_BASE_URL
+api_key_env: OPENAI_API_KEY
+batch_size: 128
+max_completion_tokens: 32768
+output_format: json_object
+effort: high
+api_mode: responses_background
+reasoning_summary: auto
+request_timeout_seconds: 300
+request_retry_limit: 4

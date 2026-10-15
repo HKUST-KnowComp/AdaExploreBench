@@ -1,0 +1,14 @@
+Scenario: {{ scenario | tojson }}
+All frozen candidate fields: {{ fields | tojson }}
+Lexicographic orders: {{ component | tojson }}
+
+Audit only the supplied orders with a permissive plausibility standard. Do not audit diversity, catalog coverage, the number of orders, omitted groups, omitted fields, or alternative permutations.
+
+For every order_id, check only that:
+1. the three fields can coexist and be observed in at least one realistic decision situation in the supplied scenario;
+2. the stated first-to-last order is broadly reasonable as a lexicographic policy and is not plainly arbitrary or contradicted by the field definitions; and
+3. the rationale actually explains that exact order: why the first cue may decide first, why the second is consulted when the first does not settle the case, and why the third remains useful for the cases left unresolved.
+
+Do not require an intrinsic, universal, optimal, or uniquely correct hierarchy. Do not require explicit numerical thresholds, a formal proof of indifference regions, identical units or sources, a common metric, or a frequently occurring policy. Different fields may support different actions on the same case. Accept an uncommon or non-obvious order whenever the three fields can coexist and the supplied rationale gives it a coherent scenario-grounded interpretation.
+
+Reject only a concrete failure of one of the three checks above. Return exactly one verdict for every supplied order_id; do not invent, omit, or repeat an ID.

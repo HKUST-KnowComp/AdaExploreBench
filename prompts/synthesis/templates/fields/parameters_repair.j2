@@ -1,0 +1,12 @@
+Scenario: {{ scenario | tojson }}
+Complete frozen field catalog and decision semantics: {{ field_index | tojson }}
+Numerical component: {{ component | tojson }}
+Program-computed mapped means using each field's legal minimum and maximum: {{ parameter_diagnostics | default([]) | tojson }}
+Blocking issues: {{ issues | tojson }}
+Required component schema: {{ target_schema | tojson }}
+
+Repair only the numerical properties and field IDs named by the issues. Field identity, definition, unit, population, time window, pressure_direction, effect_strength, eligible_families, is_reversal, and reversal rationale are frozen.
+
+For a range issue, replace the complete minimum, maximum, and typical_range values needed for one coherent scale in the frozen unit; keep the legal range grounded in realistically observable common and stressed values rather than a merely theoretical extreme that makes the intended means occupy a tiny fraction of the scale. For any profile_beta issue, replace all three low, mixed, and high Beta pairs for that field together. Every alpha and beta must be strictly greater than 0, and every concentration alpha+beta must be from 4 through 12 inclusive. Use only normalized mean m=alpha/(alpha+beta) and mapped raw mean minimum+m*(maximum-minimum); typical_range is a containment target, never the mapping scale. Preserve low <= mixed <= high for direction 1 and low >= mixed >= high for direction -1. Keep low and mixed centers within or credibly near ordinary operation and high at a plausible stressed value. Before returning a Beta repair, calculate all three resulting raw means against every numeric condition in the issue; do not return unchanged or cosmetically adjusted shapes that fail the stated bounds. Rewrite parameter_basis when necessary to agree with the authoritative range and Beta populations.
+
+For a merged-set issue, modify only the named fields and numerical properties. Exact cross-field accounting and physical invariants belong to the relation stage; do not distort credible marginal populations to force per-record equations. Preserve every unrelated accepted field and return only the smallest patch operations satisfying all corrected conditions and the required schema.

@@ -1,0 +1,68 @@
+name: Deploy viewer to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: viewer/package-lock.json
+
+      - name: Install viewer dependencies
+        working-directory: viewer
+        run: npm ci --no-audit --no-fund
+
+      - name: Validate published viewer data
+        run: python viewer/validate_public_data.py --compressed
+
+      - name: Test overview
+        working-directory: viewer
+        run: npm run test -- src/OverviewApp.test.tsx
+
+      - name: Build viewer
+        working-directory: viewer
+        env:
+          VITE_COMPRESSED_DATA: "true"
+        run: npm run build
+
+      - name: Keep only compressed viewer data in the Pages artifact
+        run: find viewer/dist/data -type f -name '*.json' -delete
+
+      - name: Report Pages artifact size
+        run: du -sh viewer/dist
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: viewer/dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,9 @@
+You define one realistic operational decision scenario for a synthetic benchmark. A task blueprint may be supplied as immutable human-authored context; when it is absent, author the scenario description, agent role, and four ordered actions yourself.
+
+Always author these two properties:
+
+1. Define low, mixed, and high operational populations with increasing intervention tendency. Give each profile a positive weight and make the three weights sum to exactly 1. Describe the populations qualitatively in terms of the governed condition, urgency, expected loss, and autonomous recovery. Do not pre-author field definitions, raw numerical thresholds, ranges, or distributions. Action cost, execution capacity, and staffing convenience do not define these profiles.
+
+2. For each supplied fixed rule family, write one concise scenario-specific description of the kind of decision logic it represents for the task. Preserve the fixed family meaning.
+
+When a blueprint is supplied, do not return or rewrite its task_id, description, agent_role, or actions. When no blueprint is supplied, return one description, one agent_role, and exactly four ordered actions in addition to the two properties above. Never author domain descriptions or program-owned identities.

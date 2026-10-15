@@ -1,0 +1,13 @@
+{
+  "type": "object", "additionalProperties": false, "required": ["verdicts", "overall_summary"],
+  "properties": {
+    "verdicts": {"type": "array", "minItems": 1, "items": {
+      "type": "object", "additionalProperties": false, "required": ["component_id", "accepted", "issues", "summary"],
+      "properties": {
+        "component_id": {"type": "string", "minLength": 1}, "accepted": {"type": "boolean"}, "summary": {"type": "string", "minLength": 1},
+        "issues": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["path", "code", "message"], "properties": {"path": {"type": "string"}, "code": {"type": "string", "minLength": 1}, "message": {"type": "string", "minLength": 1}}}}
+      }
+    }},
+    "overall_summary": {"type": "string", "minLength": 1}
+  }
+}

@@ -1,0 +1,12 @@
+provider: openai_compat
+conversation_protocol: openai_chat
+model: gpt-6-luna
+concurrency: 96
+base_url_env: MONKEY_BASE_URL
+api_key_env: MONKEY_API_KEY
+batch_size: 96
+max_completion_tokens: 32768
+output_format: json_object
+effort: high
+request_timeout_seconds: 300
+request_retry_limit: 4

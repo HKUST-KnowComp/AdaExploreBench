@@ -1,0 +1,18 @@
+model: Qwen3.5-9B
+concurrency: 64
+conversation_protocol: openai_chat
+base_url: http://localhost:8812/v1
+api_key: local
+batch_size: 64
+temperature: 0.0
+max_tokens: 8192
+output_format: json_object
+# Qwen3.5 has no effort levels: thinking is on by default and vLLM collapses
+# any non-"none" reasoning_effort to that same boolean. "default" sends no
+# reasoning_effort at all; reasoning length is capped by the token budget
+# below (99.5% of observed completions finish within 4096 tokens).
+effort: default
+extra_body:
+  thinking_token_budget: 4096
+request_timeout_seconds: 1800
+request_retry_limit: 3

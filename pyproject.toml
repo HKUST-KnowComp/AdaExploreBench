@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "adaexplorebench"
+version = "6.0.0"
+description = "AdaExploreBench static and dynamic rule-induction benchmark"
+requires-python = ">=3.11"
+dependencies = [
+    "httpx>=0.27",
+    "pyyaml>=6.0",
+    "google-genai>=2.7",
+    "jinja2>=3.1",
+    "jsonschema>=4.23",
+    "z3-solver>=4.13,<5",
+]
+
+[tool.setuptools.packages.find]
+where = [".", "src"]
+include = [
+    "generator*",
+    "protocol*",
+    "runtime*",
+    "scripts*",
+    "synthesis*",
+]
+
+[tool.setuptools.package-data]
+"synthesis.templates" = [
+    "domain_templates.schema.json",
+    "domain_templates.skeleton.json",
+]
+
+[tool.pytest.ini_options]
+pythonpath = [".", "src"]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-asyncio>=0.23",
+]

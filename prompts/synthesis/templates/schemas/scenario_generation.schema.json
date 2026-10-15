@@ -1,0 +1,54 @@
+{
+  "type": "object", "additionalProperties": false,
+  "required": ["description", "agent_role", "actions", "operational_profiles", "rule_families"],
+  "properties": {
+    "description": {"type": "string", "minLength": 1},
+    "agent_role": {"type": "string", "minLength": 1},
+    "actions": {
+      "type": "array", "minItems": 4, "maxItems": 4,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["display_name", "description"],
+        "properties": {
+          "display_name": {"type": "string", "minLength": 1},
+          "description": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "operational_profiles": {
+      "type": "object", "additionalProperties": false,
+      "required": ["low", "mixed", "high"],
+      "properties": {
+        "low": {"$ref": "#/$defs/profile"},
+        "mixed": {"$ref": "#/$defs/profile"},
+        "high": {"$ref": "#/$defs/profile"}
+      }
+    },
+    "rule_families": {"$ref": "#/$defs/families"}
+  },
+  "$defs": {
+    "profile": {
+      "type": "object", "additionalProperties": false,
+      "required": ["weight", "description"],
+      "properties": {
+        "weight": {"type": "number", "exclusiveMinimum": 0, "maximum": 1},
+        "description": {"type": "string", "minLength": 1}
+      }
+    },
+    "families": {
+      "type": "object", "additionalProperties": false,
+      "required": ["additive_aggregation", "conjunctive_gating", "disjunctive_sufficiency", "lexicographic_priority"],
+      "properties": {
+        "additive_aggregation": {"$ref": "#/$defs/family"},
+        "conjunctive_gating": {"$ref": "#/$defs/family"},
+        "disjunctive_sufficiency": {"$ref": "#/$defs/family"},
+        "lexicographic_priority": {"$ref": "#/$defs/family"}
+      }
+    },
+    "family": {
+      "type": "object", "additionalProperties": false,
+      "required": ["description"],
+      "properties": {"description": {"type": "string", "minLength": 1}}
+    }
+  }
+}

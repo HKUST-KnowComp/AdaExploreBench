@@ -1,0 +1,182 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["template_id", "feasibility_constraints"],
+  "properties": {
+    "template_id": {"type": "string", "minLength": 1},
+    "feasibility_constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "description", "expr"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "description": {"type": "string", "minLength": 1},
+          "expr": {"$ref": "#/$defs/boolean_expression"}
+        }
+      }
+    }
+  },
+  "$defs": {
+    "number_atom": {
+      "anyOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["field"],
+          "properties": {"field": {"type": "string"}}
+        }
+      ]
+    },
+    "number_term": {
+      "anyOf": [
+        {"$ref": "#/$defs/number_atom"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["const"],
+          "properties": {"const": {"type": "number"}}
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "args"],
+          "properties": {
+            "op": {"type": "string", "enum": ["add", "mul"]},
+            "args": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 8,
+              "items": {"$ref": "#/$defs/number_atom"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "args"],
+          "properties": {
+            "op": {"type": "string", "enum": ["sub", "div"]},
+            "args": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {"$ref": "#/$defs/number_atom"}
+            }
+          }
+        }
+      ]
+    },
+    "number_expression": {
+      "anyOf": [
+        {"$ref": "#/$defs/number_term"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "args"],
+          "properties": {
+            "op": {"type": "string", "enum": ["add", "mul"]},
+            "args": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 8,
+              "items": {"$ref": "#/$defs/number_term"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "args"],
+          "properties": {
+            "op": {"type": "string", "enum": ["sub", "div"]},
+            "args": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {"$ref": "#/$defs/number_term"}
+            }
+          }
+        }
+      ]
+    },
+    "comparison": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["op", "left", "right"],
+      "properties": {
+        "op": {"type": "string", "enum": ["le", "lt", "ge", "gt", "eq"]},
+        "left": {"$ref": "#/$defs/number_expression"},
+        "right": {"$ref": "#/$defs/number_expression"}
+      }
+    },
+    "boolean_clause": {
+      "anyOf": [
+        {"$ref": "#/$defs/comparison"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "arg"],
+          "properties": {
+            "op": {"type": "string", "const": "not"},
+            "arg": {"$ref": "#/$defs/comparison"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "args"],
+          "properties": {
+            "op": {"type": "string", "enum": ["and", "or"]},
+            "args": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 8,
+              "items": {"$ref": "#/$defs/comparison"}
+            }
+          }
+        }
+      ]
+    },
+    "boolean_expression": {
+      "anyOf": [
+        {"$ref": "#/$defs/boolean_clause"},
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "args"],
+          "properties": {
+            "op": {"type": "string", "enum": ["and", "or"]},
+            "args": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 8,
+              "items": {"$ref": "#/$defs/boolean_clause"}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "arg"],
+          "properties": {
+            "op": {"type": "string", "const": "not"},
+            "arg": {"$ref": "#/$defs/boolean_clause"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["op", "if", "then"],
+          "properties": {
+            "op": {"type": "string", "const": "implies"},
+            "if": {"$ref": "#/$defs/boolean_clause"},
+            "then": {"$ref": "#/$defs/boolean_clause"}
+          }
+        }
+      ]
+    }
+  }
+}

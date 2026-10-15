@@ -1,0 +1,12 @@
+provider: openai_compat
+conversation_protocol: openai_chat
+model: gpt-5.6-terra
+concurrency: 40
+base_url_env: CODEX_FOR_BASE_URL
+api_key_env: CODEX_FOR_API_KEY
+batch_size: 16
+max_completion_tokens: 32768
+output_format: json_object
+effort: high
+request_timeout_seconds: 300
+request_retry_limit: 4

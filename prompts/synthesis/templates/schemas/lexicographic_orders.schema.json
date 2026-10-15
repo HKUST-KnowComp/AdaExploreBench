@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["template_id", "approved_priority_orders"],
+  "properties": {
+    "template_id": {"type": "string", "minLength": 1},
+    "approved_priority_orders": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["order_id", "fields", "rationale"],
+        "properties": {
+          "order_id": {"type": "string", "minLength": 1},
+          "fields": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 3,
+            "uniqueItems": true,
+            "items": {"type": "string"}
+          },
+          "rationale": {"type": "string", "minLength": 1}
+        }
+      }
+    }
+  }
+}

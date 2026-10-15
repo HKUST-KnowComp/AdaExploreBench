@@ -1,0 +1,15 @@
+{
+  "type": "object", "additionalProperties": false, "required": ["template_id", "fields"],
+  "properties": {
+    "template_id": {"type": "string", "minLength": 1},
+    "fields": {"type": "array", "minItems": 1, "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["field_id", "display_name", "description", "type", "unit", "pressure_direction"],
+      "properties": {
+        "field_id": {"type": "string", "minLength": 1}, "display_name": {"type": "string", "minLength": 1}, "description": {"type": "string", "minLength": 1},
+        "type": {"enum": ["integer", "decimal"]}, "unit": {"type": "string", "minLength": 1},
+        "pressure_direction": {"enum": [-1, 1]}
+      }
+    }}
+  }
+}

@@ -1,0 +1,13 @@
+Scenario: {{ scenario | tojson }}
+Frozen fields: {{ fields | tojson }}
+Field constraint component: {{ component | tojson }}
+Blocking issues: {{ issues | tojson }}
+Required component schema with legal field IDs: {{ target_schema | tojson }}
+
+Repair only the rejected field constraints. If a rejected constraint is logically equivalent to an accepted constraint, remove the rejected duplicate; do not rewrite or modify the accepted representative. If a rejected constraint is not a necessary definitional, accounting, population-containment, or physical-capacity invariant, remove the complete constraint. If the same invariant remains valid but its expression direction, operator, arithmetic, scope, or description is wrong, replace the complete constraint with the minimal correct executable expression and one concise description while preserving its id. For a `bundled_independent_invariants` issue, split the rejected constraint into its independently valid minimal constraints; preserve every valid branch, but do not retain the bundled conjunction or invent a constraint not contained in it.
+
+Do not add constraints, modify fields, or encode availability, missing-value, null, sentinel, fallback, estimator, policy, priority, replacement, reversal, or field-selection logic. Preserve every unrelated accepted constraint. Return only the repair decisions required by the repair output schema.
+
+Return exactly one item in `repairs` for every rejected constraint ID and no other ID. Identify it with `constraint_id`; do not use an array index or patch path. Set `action` to `remove` and `replacement_json` to the JSON text `null` when removing a constraint. Set `action` to `replace` when repairing one, and make `replacement_json` encode exactly one object with `description` and `expr`. Set `action` to `split` for a bundled constraint, and make `replacement_json` encode an array of at least two such objects. Do not include `id`; the program preserves the original ID for the first result and assigns deterministic part IDs to the others. If an issue concerns only availability, nullness, or whether evidence is numeric, remove that complete constraint instead of inventing a numeric test for availability.
+
+Never rename an ID or reuse it for another constraint.

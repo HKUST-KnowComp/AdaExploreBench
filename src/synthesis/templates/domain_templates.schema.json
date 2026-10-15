@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "adaexplorebench://domain_templates.schema.json",
+  "title": "AdaExploreBench canonical domain templates",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "template_version", "defaults", "domains"],
+  "properties": {
+    "schema_version": {"const": "adaexplorebench_domain_templates_v4_0"},
+    "template_version": {"type": "string", "minLength": 1},
+    "defaults": {"$ref": "#/$defs/defaults"},
+    "domains": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"$ref": "#/$defs/domain"}
+    }
+  },
+  "$defs": {
+    "text": {"type": "string", "minLength": 1},
+    "familyId": {
+      "enum": ["additive_aggregation", "conjunctive_gating", "disjunctive_sufficiency", "lexicographic_priority"]
+    },
+    "interval": {
+      "type": "array",
+      "items": {"type": "number"},
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["sampling", "rule_families"],
+      "properties": {
+        "sampling": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["population_model", "conditional_field_model", "replacement_dependency_model", "beta_concentration_range"],
+          "properties": {
+            "population_model": {"const": "operational_profile_mixture"},
+            "conditional_field_model": {"const": "profile_beta"},
+            "replacement_dependency_model": {"const": "latent_beta_coupling"},
+            "beta_concentration_range": {"$ref": "#/$defs/interval"}
+          }
+        },
+        "rule_families": {
+          "type": "object", "additionalProperties": false,
+          "required": ["additive_aggregation", "conjunctive_gating", "disjunctive_sufficiency", "lexicographic_priority"],
+          "properties": {
+            "additive_aggregation": {"type": "object", "additionalProperties": false, "required": ["description", "bias_range"], "properties": {"description": {"$ref": "#/$defs/text"}, "bias_range": {"$ref": "#/$defs/interval"}}},
+            "conjunctive_gating": {"$ref": "#/$defs/thresholdDefaults"},
+            "disjunctive_sufficiency": {"$ref": "#/$defs/thresholdDefaults"},
+            "lexicographic_priority": {"type": "object", "additionalProperties": false, "required": ["description", "threshold_quantiles", "indifference_band_range"], "properties": {"description": {"$ref": "#/$defs/text"}, "threshold_quantiles": {"$ref": "#/$defs/interval"}, "indifference_band_range": {"$ref": "#/$defs/interval"}}}
+          }
+        }
+      }
+    },
+    "thresholdDefaults": {
+      "type": "object", "additionalProperties": false,
+      "required": ["description", "threshold_quantiles"],
+      "properties": {"description": {"$ref": "#/$defs/text"}, "threshold_quantiles": {"$ref": "#/$defs/interval"}}
+    },
+    "domain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description", "templates"],
+      "properties": {
+        "description": {"$ref": "#/$defs/text"},
+        "templates": {"type": "object", "minProperties": 1, "additionalProperties": {"$ref": "#/$defs/template"}}
+      }
+    },
+    "template": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["description", "task_id", "agent_role", "actions", "fields", "operational_profiles", "rule_families", "dynamics"],
+      "properties": {
+        "description": {"$ref": "#/$defs/text"},
+        "task_id": {"$ref": "#/$defs/text"},
+        "agent_role": {"$ref": "#/$defs/text"},
+        "actions": {
+          "type": "array", "minItems": 4, "maxItems": 4,
+          "items": {
+            "type": "object", "additionalProperties": false,
+            "required": ["display_name", "description"],
+            "properties": {"display_name": {"$ref": "#/$defs/text"}, "description": {"$ref": "#/$defs/text"}}
+          }
+        },
+        "fields": {"type": "object", "minProperties": 1, "additionalProperties": {"$ref": "#/$defs/field"}},
+        "operational_profiles": {"$ref": "#/$defs/profiles"},
+        "rule_families": {"$ref": "#/$defs/templateFamilies"},
+        "feasibility_constraints": {"type": "array", "items": {"$ref": "#/$defs/constraint"}},
+        "dynamics": {"$ref": "#/$defs/dynamics"}
+      }
+    },
+    "field": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "minimum", "maximum", "typical_range", "display_name", "description", "unit", "pressure_direction", "is_reversal", "effect_strength", "eligible_families", "profile_beta"],
+      "properties": {
+        "type": {"enum": ["integer", "decimal"]},
+        "minimum": {"type": "number"}, "maximum": {"type": "number"},
+        "typical_range": {"$ref": "#/$defs/interval"},
+        "display_name": {"$ref": "#/$defs/text"}, "description": {"$ref": "#/$defs/text"}, "unit": {"$ref": "#/$defs/text"},
+        "pressure_direction": {"enum": [-1, 1]},
+        "is_reversal": {"type": "boolean"},
+        "effect_strength": {"type": "number", "minimum": 0.1, "maximum": 1},
+        "eligible_families": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/familyId"}},
+        "profile_beta": {
+          "type": "object", "additionalProperties": false, "required": ["low", "mixed", "high"],
+          "properties": {"low": {"$ref": "#/$defs/positivePair"}, "mixed": {"$ref": "#/$defs/positivePair"}, "high": {"$ref": "#/$defs/positivePair"}}
+        }
+      }
+    },
+    "positivePair": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "items": {"type": "number", "exclusiveMinimum": 0}
+    },
+    "profiles": {
+      "type": "object", "additionalProperties": false, "required": ["low", "mixed", "high"],
+      "properties": {"low": {"$ref": "#/$defs/profile"}, "mixed": {"$ref": "#/$defs/profile"}, "high": {"$ref": "#/$defs/profile"}}
+    },
+    "profile": {
+      "type": "object", "additionalProperties": false, "required": ["weight", "description"],
+      "properties": {"weight": {"type": "number", "exclusiveMinimum": 0, "maximum": 1}, "description": {"$ref": "#/$defs/text"}}
+    },
+    "templateFamilies": {
+      "type": "object", "additionalProperties": false,
+      "required": ["additive_aggregation", "conjunctive_gating", "disjunctive_sufficiency", "lexicographic_priority"],
+      "properties": {
+        "additive_aggregation": {"$ref": "#/$defs/familyDescription"},
+        "conjunctive_gating": {"$ref": "#/$defs/familyDescription"},
+        "disjunctive_sufficiency": {"$ref": "#/$defs/familyDescription"},
+        "lexicographic_priority": {"$ref": "#/$defs/lexicographicFamily"}
+      }
+    },
+    "familyDescription": {
+      "type": "object", "additionalProperties": false, "required": ["description"],
+      "properties": {"description": {"$ref": "#/$defs/text"}}
+    },
+    "lexicographicFamily": {
+      "type": "object", "additionalProperties": false, "required": ["description", "approved_priority_orders"],
+      "properties": {
+        "description": {"$ref": "#/$defs/text"},
+        "approved_priority_orders": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["fields", "rationale"], "properties": {"fields": {"type": "array", "minItems": 3, "maxItems": 3, "uniqueItems": true, "items": {"type": "string"}}, "rationale": {"$ref": "#/$defs/text"}}}}
+      }
+    },
+    "constraint": {
+      "type": "object", "additionalProperties": false,
+      "required": ["id", "description", "expr"],
+      "properties": {"id": {"$ref": "#/$defs/text"}, "description": {"$ref": "#/$defs/text"}, "expr": {"type": "object", "minProperties": 1}}
+    },
+    "dynamics": {
+      "type": "object", "additionalProperties": false, "required": ["replacements", "direction_reversals"],
+      "properties": {
+        "replacements": {"type": "object", "additionalProperties": {"$ref": "#/$defs/replacement"}},
+        "direction_reversals": {"type": "object", "additionalProperties": {"$ref": "#/$defs/reversal"}}
+      }
+    },
+    "replacement": {
+      "type": "object", "additionalProperties": false,
+      "required": ["decision_role", "members", "relation_type", "rationale", "source_contrast", "authority_by_field", "joint_sampling", "effective_scope", "transitions"],
+      "properties": {
+        "decision_role": {"$ref": "#/$defs/text"},
+        "members": {"type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": {"type": "string"}},
+        "relation_type": {"enum": ["same_source", "same_metric", "different_horizon", "proxy_substitution"]}, "rationale": {"$ref": "#/$defs/text"}, "source_contrast": {"$ref": "#/$defs/text"},
+        "authority_by_field": {"type": "object", "minProperties": 2, "additionalProperties": {"$ref": "#/$defs/text"}},
+        "joint_sampling": {"type": "object", "additionalProperties": false, "required": ["coupling_strength"], "properties": {"coupling_strength": {"type": "number", "minimum": 0, "maximum": 0.6}}},
+        "effective_scope": {"$ref": "#/$defs/text"},
+        "transitions": {"type": "object", "minProperties": 2, "maxProperties": 2, "additionalProperties": {"$ref": "#/$defs/transition"}}
+      }
+    },
+    "transition": {
+      "type": "object", "additionalProperties": false,
+      "required": ["outgoing_field", "incoming_field", "trigger", "outgoing_retirement_reason", "incoming_authority_reason", "expected_duration", "ending_condition"],
+      "properties": {
+        "outgoing_field": {"type": "string"}, "incoming_field": {"type": "string"}, "trigger": {"$ref": "#/$defs/text"},
+        "outgoing_retirement_reason": {"$ref": "#/$defs/text"}, "incoming_authority_reason": {"$ref": "#/$defs/text"},
+        "expected_duration": {"$ref": "#/$defs/text"}, "ending_condition": {"$ref": "#/$defs/text"}
+      }
+    },
+    "reversal": {
+      "type": "object", "additionalProperties": false,
+      "required": ["trigger", "semantics_before", "semantics_after", "reversal_reason"],
+      "properties": {
+        "trigger": {"$ref": "#/$defs/text"},
+        "semantics_before": {"$ref": "#/$defs/text"}, "semantics_after": {"$ref": "#/$defs/text"}, "reversal_reason": {"$ref": "#/$defs/text"}
+      }
+    }
+  }
+}

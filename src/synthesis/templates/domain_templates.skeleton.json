@@ -1,0 +1,32 @@
+{
+  "schema_version": "adaexplorebench_domain_templates_v4_0",
+  "template_version": "4.0.0",
+  "defaults": {
+    "sampling": {
+      "population_model": "operational_profile_mixture",
+      "conditional_field_model": "profile_beta",
+      "replacement_dependency_model": "latent_beta_coupling",
+      "beta_concentration_range": [4, 12]
+    },
+    "rule_families": {
+      "additive_aggregation": {
+        "description": "Multiple fields provide directed, graded evidence whose normalized weighted sum determines the intervention level.",
+        "bias_range": [-0.1, 0.1]
+      },
+      "conjunctive_gating": {
+        "description": "Intervention escalates only when multiple necessary conditions jointly satisfy their gates; a missing critical condition limits escalation.",
+        "threshold_quantiles": [0.25, 0.75]
+      },
+      "disjunctive_sufficiency": {
+        "description": "Any one sufficiently strong field can independently provide enough evidence to justify escalation.",
+        "threshold_quantiles": [0.25, 0.75]
+      },
+      "lexicographic_priority": {
+        "description": "Fields are evaluated in a fixed priority order, and decisive higher-priority evidence cannot be overridden by lower-priority fields.",
+        "threshold_quantiles": [0.25, 0.75],
+        "indifference_band_range": [0.2, 0.4]
+      }
+    }
+  },
+  "domains": {}
+}

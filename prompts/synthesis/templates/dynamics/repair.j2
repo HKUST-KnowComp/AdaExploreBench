@@ -1,0 +1,13 @@
+Scenario: {{ scenario | tojson }}
+Frozen fields: {{ fields | tojson }}
+Dynamic component: {{ component | tojson }}
+Blocking issues: {{ issues | tojson }}
+Required component schema with legal field IDs: {{ target_schema | tojson }}
+
+Repair only the semantic unit named by each issue. Every retained group must use endpoints with the same frozen `pressure_direction`; type and unit mismatches are allowed and must not be repaired. Do not require endpoints to become identical or to occupy equal status in every condition.
+
+For a group issue, preserve the endpoints when a coherent event-specific handoff is possible and replace the complete group with its group_id, two members, honest relationship type, shared decision_role, pair-specific rationale, source contrast, per-member authorities, coupling strength from 0 through 0.6, effective scope, and two directed transitions. Effective scope must describe the governed business objects or population, workflow or decision boundary, and relevant time or authority boundary; never use rule-family names or field-eligibility labels as the scope. The rationale must explain the shared decision concern, the meaningful difference between the measurements, and why that difference still permits replacement rather than merely restating availability. Remove the group only when the frozen meanings necessarily conflict, require simultaneous use, or support no plausible handoff event.
+
+For a transition issue, replace only that transition. Its event must explain both why the outgoing field relinquishes the rule position and why the incoming field becomes a reasonable cue; the incoming field need not reproduce the same measurement or be universally authoritative.
+
+For a `__replacements__` issue, add only the specifically identified omitted pair with its complete group and two directed transitions. Preserve unrelated accepted groups and transitions. Return the smallest patch satisfying the corrected conditions and required schema.

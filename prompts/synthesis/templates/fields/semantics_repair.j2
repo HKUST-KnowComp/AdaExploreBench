@@ -1,0 +1,12 @@
+Scenario: {{ scenario | tojson }}
+Frozen field inventory: {{ field_catalog | tojson }}
+Fixed rule-family meanings: {{ family_meanings | tojson }}
+Decision-semantics component: {{ component | tojson }}
+Blocking issues: {{ issues | tojson }}
+Required component schema: {{ target_schema | tojson }}
+
+Repair only effect_strength, eligible_families, is_reversal, trigger, semantics_before, semantics_after, reversal_reason, and reversal_rationale for the field IDs named by the issues. Field identity, description, type, unit, source, population, aggregation, window, and pressure_direction are frozen. Never add, remove, or reorder field objects. Preserve every unrelated accepted field.
+
+For a strength issue, recalibrate the named field relative to the complete catalog without changing unrelated strengths. For a family issue, retain exactly the roles supported by the three supplied fixed mathematical meanings. For a reversal issue, preserve the exact measurement and either restore a valid opposite-tendency event with concrete trigger, before/after chains, and reason, or set is_reversal=false, clear all four event fields to empty strings, and explain the stable tendency in reversal_rationale. You should review and re-analyze the field according to the description before you repair, do not blindly agree to the original outputs.
+
+Return only the smallest patch operations whose result satisfies all supplied corrected conditions and the required schema.

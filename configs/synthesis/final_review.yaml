@@ -1,0 +1,12 @@
+model_config: configs/models/gpt-5.6-luna.yaml
+generation:
+  max_completion_tokens: 32768
+  effort: medium
+  output_format: json_schema
+  request_timeout_seconds: 300
+  api_mode: responses_background
+  background_poll_interval_seconds: 2
+concurrency: 16
+request_attempt_limit: 3
+cache: {directory: .tmp/final_dataset_review, enabled: true}
+output_filename: llm_review.json

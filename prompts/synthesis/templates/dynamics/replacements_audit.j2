@@ -1,0 +1,11 @@
+Scenario: {{ scenario | tojson }}
+Fields: {{ fields | tojson }}
+Replacements: {{ component | tojson }}
+
+Audit replacements as event-specific rule-position handoffs, not as claims that two fields are naturally identical or always have equal status. Both endpoints must have the same frozen `pressure_direction`; reject a group when they do not. Different types, quantities, populations, horizons, units, or authority levels are allowed and are not rejection criteria when the authored event explains why the incoming field becomes a reasonable cue for that position.
+
+For every group_id, verify that its two members, decision_role, relationship type, pair-specific rationale, source contrast, per-member authorities, effective scope, and two transitions consistently describe one event-specific handoff. The effective scope must identify the governed business objects or population, workflow or decision boundary, and relevant time or authority boundary; reject a rule-family list or field-eligibility labels because they do not define scope. The rationale must explain the shared decision concern, the meaningful difference between the measurements, and why that difference still permits replacement; merely restating endpoint availability is insufficient. Reject only when no stated condition lets one field reasonably occupy the other's rule position without semantic contradiction.
+
+For every transition_id, verify that the trigger provides both a reason the outgoing field relinquishes the position and a positive reason the incoming field becomes available and relevant. The incoming field need not reproduce the same measurement or be universally sufficient. Qualitative triggers are valid; the two directions may use different, rare, or asymmetric events. Effective scope, duration, and ending condition only need to be coherent with the authored handoff.
+
+Return one verdict for every group_id and transition_id, plus one `__replacements__` set verdict. Reject the set verdict only when you can name a concrete omitted field pair and a plausible event that supports a handoff; do not demand a numeric count or vaguely request more pairs.

@@ -1,0 +1,10 @@
+Scenario: {{ scenario | tojson }}
+Complete field inventory: {{ component | tojson }}
+
+Your job is to analyze the catalog-wide field set, check if there is information duplication or field suitability issues.
+
+First, reject strict duplicates. Two fields are duplicates when they are semantic aliases for exactly the same measurement, or when one is fully deterministic from the other, such as Y = 2X or A = B's complement. Be careful when confirming strict duplicates, shared sources, correlation, causal relation, overlapping meaning, or partial predictability are not duplication. Counts, rates, probabilities, forecasts, trends, different windows, and different populations are distinct unless one field alone determines the other without any additional observation or assumption.
+
+Second, assess each field against the Scenario and agent_role as a whole. The field must describe information that this agent could realistically observe or obtain through the stated workflow and data sources under the Scenario, and it must concern the governed population, condition, and decision horizon. Reject a field that does not belong to the current workflow, relies on information unavailable to this agent, or is observable only after the current decision is made. Do not reject a field merely because it is shared, aggregated, historical over completed cases, or produced by a system rather than viewed directly, when the Scenario makes it realistically available to the agent.
+
+Identify the exact duplicate relationship or the exact Scenario/role visibility contradiction. Return only blocking issues For each issue, list every implicated field in field_ids, select the field or fields to remove in drop_field_ids, and give the exact reason. For a strict duplicate group, retain the clearest direct measurement and drop only the redundant aliases or deterministic transforms; never drop the entire group. For an unavailable field, include that field in both field_ids and drop_field_ids. Set accepted=true exactly when issues is empty. Fields absent from issues will be accepted.

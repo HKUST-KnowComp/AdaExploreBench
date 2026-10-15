@@ -1,0 +1,5 @@
+Scenario core: {{ scenario | tojson }}
+Frozen field inventory: {{ field_catalog | tojson }}
+Fixed rule-family meanings: {{ family_meanings | tojson }}
+
+Return one semantics entry for every supplied field_id in the bound structured-output schema. Preserve the supplied template_id and field IDs exactly.

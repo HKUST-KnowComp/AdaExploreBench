@@ -1,0 +1,12 @@
+model: deepseek-flash
+concurrency: 64
+conversation_protocol: deepseek_chat
+base_url_env: DEEPSEEK_BASE_URL
+api_key_env: DEEPSEEK_API_KEY
+batch_size: 16
+temperature: 0.0
+max_tokens: 32768
+output_format: json_object
+effort: high
+request_timeout_seconds: 300
+request_retry_limit: 2

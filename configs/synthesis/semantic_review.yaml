@@ -1,0 +1,14 @@
+enabled: true
+model_config: configs/models/gpt-5.6-luna.yaml
+generation:
+  max_completion_tokens: 32768
+  effort: high
+  output_format: json_schema
+  request_timeout_seconds: 300
+  api_mode: responses_background
+  background_poll_interval_seconds: 2
+batch_size: 12
+concurrency: 16
+request_attempt_limit: 3
+max_distractor_trials_per_core: 3
+diagnostic_sample_limit: 0

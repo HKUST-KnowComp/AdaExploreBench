@@ -1,0 +1,13 @@
+Domain: {{ domain_id }}
+Fixed domain description: {{ domain_description }}
+Benchmark boundary: {{ benchmark_boundary }}
+Fixed rule-family meanings: {{ family_meanings | tojson }}
+Existing scenario manifests: {{ existing_templates | tojson }}
+
+{% if blueprint %}
+Authoritative task blueprint: {{ blueprint | tojson }}
+
+Expand this one blueprint. Return only operational_profiles and rule_families. The blueprint's task_id, description, agent_role, and actions are immutable program inputs and must not appear in the response.
+{% else %}
+No task blueprint is supplied. Create one scenario inside the fixed domain and benchmark boundary. Return description, agent_role, exactly four ordered actions, operational_profiles, and rule_families. Do not return a domain description, task ID, or template ID.
+{% endif %}

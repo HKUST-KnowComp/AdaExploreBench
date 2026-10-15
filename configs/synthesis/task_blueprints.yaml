@@ -1,0 +1,494 @@
+# Human-authored task definitions for template synthesis.
+#
+# Each configured domain must contain exactly four entries. `task_id`,
+# `description`, `agent_role`, and the ordered four-action ladder are
+# authoritative. The scenario model receives them as context but returns only
+# a template identity, operational profiles, and rule-family descriptions.
+# Edit this file and start a new --fresh run whenever the task slate changes.
+domains:
+  finance:
+    - task_id: finance_card_authorization
+      description: >-
+        A card issuer evaluates each payment authorization request in real time
+        to limit unauthorized loss without unnecessarily disrupting legitimate
+        purchases. Before responding within the authorization window, the
+        workflow can use transaction attributes, account and merchant history,
+        authentication results, recent usage patterns, and current fraud-risk
+        signals associated with the presented payment.
+      agent_role: >-
+        At each real-time payment authorization request, a card authorization
+        risk officer decides which payment intervention to apply to the
+        presented card transaction within the issuer's authorization window.
+      actions:
+        - display_name: Approve payment
+          description: >-
+            Authorize the presented transaction without adding a verification
+            or account-control intervention.
+        - display_name: Require step-up verification
+          description: >-
+            Pause authorization until the cardholder completes an additional
+            identity or transaction-verification step.
+        - display_name: Decline the transaction
+          description: >-
+            Decline the presented transaction while leaving the card otherwise
+            usable for future attempts.
+        - display_name: Decline and restrict card use
+          description: >-
+            Decline the transaction and place a temporary protective
+            restriction on further card use pending account review.
+
+    - task_id: finance_intraday_liquidity
+      description: >-
+        A corporate treasury desk reviews an authorized payment batch before
+        its settlement cutoff and chooses how strongly to intervene in its
+        funding. The checkpoint exposes available balances, expected incoming
+        and outgoing flows, settlement deadlines, payment priority, committed
+        facilities, and projected liquidity through the current settlement
+        window.
+      agent_role: >-
+        At each intraday funding checkpoint, a treasury liquidity controller
+        decides which funding intervention to apply to a queued corporate
+        payment batch over its next settlement window.
+      actions:
+        - display_name: Release against available balances
+          description: >-
+            Release the payment batch using liquidity already available in the
+            designated settlement accounts.
+        - display_name: Reallocate internal liquidity
+          description: >-
+            Transfer or concentrate internal funds before releasing the batch
+            to strengthen settlement coverage without external borrowing.
+        - display_name: Activate committed funding
+          description: >-
+            Draw an approved external liquidity facility and use the proceeds
+            to fund release of the payment batch.
+        - display_name: Activate contingency funding
+          description: >-
+            Draw on contingency funding arrangements beyond committed credit
+            lines to cover the remaining settlement gap for the payment batch.
+
+    - task_id: finance_margin_control
+      description: >-
+        A leveraged client account is reviewed at a scheduled risk checkpoint
+        to protect the firm when collateral coverage may be inadequate before
+        the next review. Available evidence includes current collateral and
+        exposure, market moves and volatility, concentration, unsettled
+        activity, prior calls, client funding behavior, and projected coverage
+        over the decision horizon.
+      agent_role: >-
+        At each scheduled account-risk checkpoint, a margin risk controller
+        decides which collateral intervention to apply to a leveraged client
+        account through the next market-risk review.
+      actions:
+        - display_name: Maintain account terms
+          description: >-
+            Keep the account operating under its current collateral terms until
+            the next scheduled risk review.
+        - display_name: Issue collateral call
+          description: >-
+            Require additional eligible collateral by a defined deadline while
+            keeping the account under heightened monitoring.
+        - display_name: Restrict new risk-taking
+          description: >-
+            Suspend new position opening and exposure increases on the account
+            while existing positions remain untouched pending collateral
+            restoration.
+        - display_name: Liquidate to reduce exposure
+          description: >-
+            Initiate protective liquidation of positions to reduce uncovered
+            exposure and bring the account back within collateral terms.
+
+    - task_id: finance_securities_settlement
+      description: >-
+        An institutional securities instruction with a pre-settlement exception
+        is reviewed before the next settlement cycle. The controller can use
+        instruction matching status, security and cash availability,
+        counterparty confirmations, market deadlines, custody messages,
+        exception history, and projected failure exposure to select a
+        remediation level.
+      agent_role: >-
+        At each pre-settlement exception review, a securities settlement
+        controller decides which remediation intervention to apply to a pending
+        institutional settlement instruction through the next settlement cycle.
+      actions:
+        - display_name: Release instruction unchanged
+          description: >-
+            Allow the pending instruction to continue through the normal
+            settlement workflow without corrective handling.
+        - display_name: Repair and revalidate instruction
+          description: >-
+            Correct the identified instruction exception and require renewed
+            matching or operational validation before settlement.
+        - display_name: Hold instruction for current cycle
+          description: >-
+            Suspend the instruction from the current settlement cycle while the
+            exception is resolved through standard operations channels.
+        - display_name: Suspend and escalate for formal resolution
+          description: >-
+            Suspend the instruction from settlement and escalate it for formal
+            counterparty and operations resolution.
+
+  healthcare:
+    - task_id: healthcare_emergency_arrival_triage
+      description: >-
+        A newly registered emergency-department arrival receives an initial
+        triage assessment that determines the urgency of the first care pathway.
+        The nurse can use presenting symptoms, vital signs, pain and mental
+        status, mechanism or onset, relevant history, vulnerability indicators,
+        and observed change during the immediate assessment window.
+      agent_role: >-
+        At each initial emergency-department assessment, a triage nurse decides
+        which clinical routing intervention to apply to a newly registered
+        patient over the immediate evaluation window.
+      actions:
+        - display_name: Route to standard evaluation
+          description: >-
+            Place the patient in the standard emergency evaluation pathway with
+            routine reassessment while awaiting a clinician.
+        - display_name: Route to expedited evaluation
+          description: >-
+            Move the patient ahead of the standard queue for earlier clinician
+            assessment without dedicated monitoring.
+        - display_name: Route to priority monitored evaluation
+          description: >-
+            Place the patient in an expedited monitored pathway with dedicated
+            observation and scheduled reassessment in addition to earlier
+            clinician assessment.
+        - display_name: Activate immediate critical response
+          description: >-
+            Route the patient directly to the highest-acuity treatment area and
+            activate an immediate resuscitation-level clinical response.
+
+    - task_id: healthcare_inpatient_bed_placement
+      description: >-
+        An admitted patient is reviewed for placement before the next transfer
+        cycle so that the care setting matches clinical and infection-control
+        needs. Evidence includes required monitoring and therapies, mobility
+        and behavioral needs, isolation status, specialty-service ownership,
+        current bed readiness, anticipated transfers, and near-term unit
+        capacity.
+      agent_role: >-
+        At each inpatient placement review, a hospital patient-flow coordinator
+        decides which bed-placement intervention to apply to an admitted patient
+        before the next transfer cycle.
+      actions:
+        - display_name: Place in standard inpatient bed
+          description: >-
+            Assign the patient to a suitable standard ward bed through the
+            normal placement workflow.
+        - display_name: Place in enhanced-care bed
+          description: >-
+            Assign the patient to a bed providing enhanced monitoring,
+            specialty support, or isolation controls.
+        - display_name: Place in stepdown bed
+          description: >-
+            Reserve and assign a stepdown (intermediate-care) placement with
+            continuous monitoring and higher nursing intensity for patients
+            who do not require critical care.
+        - display_name: Place in critical-care bed
+          description: >-
+            Reserve and assign a critical-care placement with the highest level
+            of monitoring and immediate clinical support.
+
+    - task_id: healthcare_lab_specimen_disposition
+      description: >-
+        An accessioned clinical specimen is reviewed before scheduled testing
+        to determine whether its identity and integrity support a reliable
+        result. The technologist can use labeling and order concordance,
+        collection and transport timing, container and volume status, observed
+        contamination or degradation, handling conditions, and recollection
+        feasibility.
+      agent_role: >-
+        At each pre-analytic accession review, a laboratory quality technologist
+        decides which specimen-handling intervention to apply to an incoming
+        clinical specimen before its scheduled testing window.
+      actions:
+        - display_name: Accept for testing
+          description: >-
+            Release the specimen into the scheduled analytical workflow without
+            additional corrective handling.
+        - display_name: Correct and release
+          description: >-
+            Obtain a permitted identification or labeling correction and then
+            release the specimen into the scheduled analytical workflow.
+        - display_name: Hold for corrective verification
+          description: >-
+            Quarantine the specimen while verifying its identity, handling, or
+            suitability before making a release decision.
+        - display_name: Reject and request recollection
+          description: >-
+            Reject the specimen as unsuitable for testing and request collection
+            of a replacement specimen.
+
+    - task_id: healthcare_operating_room_schedule_recovery
+      description: >-
+        An upcoming surgical case is reviewed during an operating-session
+        checkpoint when delays or resource dependencies threaten the planned
+        schedule. The manager can use case readiness, preceding-case progress,
+        staffing and room availability, equipment and sterile-supply status,
+        patient preparation, clinical priority, and downstream schedule impact.
+      agent_role: >-
+        At each perioperative schedule checkpoint, an operating-room operations
+        manager decides which schedule-recovery intervention to apply to an
+        upcoming surgical case over the current operating session.
+      actions:
+        - display_name: Proceed in assigned slot
+          description: >-
+            Keep the case in its assigned room and sequence under the current
+            operating-session plan.
+        - display_name: Resequence within assigned room
+          description: >-
+            Move the case within its assigned room's sequence to recover the
+            session schedule.
+        - display_name: Reassign to another room
+          description: >-
+            Assign the case to another suitable room in the current session to
+            recover the schedule.
+        - display_name: Defer the case from the session
+          description: >-
+            Remove the case from the current operating session and activate the
+            formal postponement and rescheduling workflow.
+
+  cybersecurity:
+    - task_id: cybersecurity_privileged_access_authorization
+      description: >-
+        A request for privileged access to a protected system is reviewed before
+        access is granted. The reviewer can use verified identity, current
+        entitlements, device and session posture, requested privileges and
+        duration, approval evidence, business justification, recent access
+        behavior, and the sensitivity of the target system.
+      agent_role: >-
+        At each privileged-access review, an identity governance officer decides
+        which authorization intervention to apply to a user's access request for
+        the requested system and approval window.
+      actions:
+        - display_name: Approve requested access
+          description: >-
+            Grant the requested privileged access for the submitted approval
+            window under standard logging controls.
+        - display_name: Grant reduced-scope access
+          description: >-
+            Grant only a subset of the requested privileges for the submitted
+            approval window.
+        - display_name: Grant restricted just-in-time access
+          description: >-
+            Grant narrower, time-limited privileged access with enhanced
+            authentication, monitoring, or approval conditions.
+        - display_name: Deny and escalate the request
+          description: >-
+            Deny privileged access and escalate the request for security or
+            entitlement-owner investigation.
+
+    - task_id: cybersecurity_endpoint_containment
+      description: >-
+        An endpoint with an active security alert is reviewed during an ongoing
+        investigation to limit propagation without unnecessary operational
+        disruption. Evidence includes detection confidence, observed processes
+        and connections, asset criticality, credential activity, lateral
+        movement indicators, data-access behavior, recent changes, and current
+        investigative findings.
+      agent_role: >-
+        At each active endpoint-alert checkpoint, a security incident responder
+        decides which containment intervention to apply to the affected endpoint
+        over the current investigation window.
+      actions:
+        - display_name: Continue monitored operation
+          description: >-
+            Keep the endpoint connected while increasing telemetry collection
+            and investigation monitoring.
+        - display_name: Apply targeted traffic restrictions
+          description: >-
+            Block the endpoint's high-risk destinations and protocols while
+            keeping it otherwise operational.
+        - display_name: Isolate endpoint communications
+          description: >-
+            Restrict the endpoint's network communications while preserving the
+            access needed for investigation and response.
+        - display_name: Fully contain endpoint and credentials
+          description: >-
+            Remove the endpoint from operational access and suspend associated
+            credentials pending eradication and recovery.
+
+    - task_id: cybersecurity_vulnerability_remediation
+      description: >-
+        A confirmed software vulnerability on a production asset is reviewed
+        before the next patch window to select the urgency of remediation.
+        Available evidence includes exploitability and active exploitation,
+        network exposure, asset and data criticality, vulnerable deployment
+        scope, available fixes, compensating controls, change constraints, and
+        projected business impact.
+      agent_role: >-
+        At each vulnerability remediation review, a vulnerability management
+        lead decides which remediation intervention to assign to a confirmed
+        finding on a production asset before the next patch window.
+      actions:
+        - display_name: Remediate in standard patch cycle
+          description: >-
+            Assign the finding to the next normal maintenance window under the
+            standard remediation workflow.
+        - display_name: Deploy compensating control
+          description: >-
+            Apply an available compensating control to reduce exposure before
+            the normal patch cycle while maintaining production service.
+        - display_name: Apply expedited fix
+          description: >-
+            Deploy an expedited patch or fix ahead of the normal patch cycle
+            while maintaining production service.
+        - display_name: Initiate emergency isolation and repair
+          description: >-
+            Isolate the vulnerable service or asset and execute emergency
+            remediation before restoring normal production access.
+
+    - task_id: cybersecurity_service_dependency_response
+      description: >-
+        A production service with a confirmed operational or security anomaly is
+        reviewed during an active incident to determine how strongly its dependent
+        service path should be restricted. The responder can use anomaly severity,
+        upstream and downstream dependencies, service criticality, observed
+        propagation, available redundancy and failover, shared infrastructure,
+        recovery readiness, customer impact, and the projected blast radius of
+        continued operation.
+      agent_role: >-
+        At each active service-incident checkpoint, a security operations lead
+        decides which dependency-containment intervention to apply to an affected
+        production service over the current response window.
+      actions:
+        - display_name: Maintain service operation
+          description: >-
+            Keep the affected service and its dependency paths operating under
+            standard production routing while continuing incident observation.
+        - display_name: Restrict affected service paths
+          description: >-
+            Disable or limit selected high-risk dependency paths while preserving
+            unaffected service functions and normal traffic where possible.
+        - display_name: Fail over and isolate affected dependencies
+          description: >-
+            Redirect supported workloads to available redundant capacity and isolate
+            the affected service from dependencies that could propagate the incident.
+        - display_name: Suspend affected service chain
+          description: >-
+            Remove the affected service and its critical dependency path from
+            production operation and initiate coordinated containment and recovery.
+
+
+  manufacturing:
+    - task_id: manufacturing_machine_maintenance
+      description: >-
+        An in-service production machine is reviewed at the start of a planned
+        production block to decide whether it can safely and reliably operate
+        through that block. Evidence includes condition-monitoring signals,
+        active alarms, degradation trends, recent failures and service,
+        operating load, product and safety requirements, and the forecast risk
+        of failure before the next maintenance opportunity.
+      agent_role: >-
+        At the start of each planned production block, a maintenance reliability
+        coordinator decides which service intervention to apply to an in-service
+        machine over that production block.
+      actions:
+        - display_name: Continue normal operation
+          description: >-
+            Run the machine through the planned production block under standard
+            operating and monitoring conditions.
+        - display_name: Operate with enhanced monitoring
+          description: >-
+            Run the machine through the production block with increased
+            condition-monitoring and inspection frequency.
+        - display_name: Derate and inspect
+          description: >-
+            Reduce the machine's operating envelope and perform an expedited
+            inspection during the production block.
+        - display_name: Stop for corrective maintenance
+          description: >-
+            Remove the machine from service and complete corrective maintenance
+            before returning it to production.
+
+    - task_id: manufacturing_production_resequencing
+      description: >-
+        A released work order is reviewed at a short-horizon scheduling
+        checkpoint when material, capacity, changeover, and due-date conditions
+        are in tension. The planner can use order priority and readiness,
+        machine and labor availability, upstream and downstream dependencies,
+        changeover requirements, work-in-process, expected completion, and
+        delivery commitments.
+      agent_role: >-
+        At each short-horizon scheduling checkpoint, a production planning
+        supervisor decides which sequencing intervention to apply to a released
+        work order over the next production window.
+      actions:
+        - display_name: Keep current sequence
+          description: >-
+            Retain the work order's current position and assigned production
+            resources for the next production window.
+        - display_name: Resequence within assigned line
+          description: >-
+            Move the work order within the current line's near-term sequence to
+            resolve timing or readiness pressure.
+        - display_name: Authorize overtime capacity
+          description: >-
+            Hold the work order on its assigned line and authorize overtime or
+            weekend capacity to protect its completion date.
+        - display_name: Reroute to alternate capacity
+          description: >-
+            Reassign the work order to alternate qualified capacity and revise
+            dependent production commitments.
+
+    - task_id: manufacturing_quality_lot_disposition
+      description: >-
+        A completed production lot is reviewed after inspection and before its
+        release window closes to determine the strength of quality intervention.
+        The engineer can use measured conformance results, defect types and
+        sampling evidence, process deviations, traceability, material and
+        equipment history, customer requirements, rework feasibility, and the
+        expected consequence of undetected nonconformance.
+      agent_role: >-
+        At each post-inspection lot review, a manufacturing quality engineer
+        decides which disposition intervention to apply to a completed production
+        lot before its release window closes.
+      actions:
+        - display_name: Release lot
+          description: >-
+            Approve the completed lot for its intended downstream use without
+            additional corrective processing.
+        - display_name: Release under concession
+          description: >-
+            Approve the lot for limited or downgraded use under a documented
+            deviation concession without additional processing.
+        - display_name: Hold for sorting or rework
+          description: >-
+            Quarantine the lot and require controlled sorting, additional
+            inspection, or rework before another disposition review.
+        - display_name: Reject lot
+          description: >-
+            Reject the lot from its intended use and initiate scrap, return, or
+            formal nonconformance handling.
+
+    - task_id: manufacturing_material_shortage_response
+      description: >-
+        A released production order is reviewed at a short-horizon material-control
+        checkpoint when available supply may be insufficient to support its planned
+        production window. The planner can use on-hand and inbound inventory,
+        material reservations, order priority, substitution eligibility, supplier
+        commitments, upstream and downstream dependencies, expected replenishment,
+        expediting options, and the production impact of an unresolved shortage.
+      agent_role: >-
+        At each short-horizon material-control checkpoint, a production materials
+        coordinator decides which supply intervention to apply to a released work
+        order over the next production window.
+      actions:
+        - display_name: Maintain planned material allocation
+          description: >-
+            Keep the work order's existing material reservations and production plan
+            without additional supply intervention.
+        - display_name: Reallocate available material
+          description: >-
+            Reassign eligible on-hand or near-term material from lower-priority uses
+            to protect the work order's planned production window.
+        - display_name: Activate alternate supply
+          description: >-
+            Use an approved substitute material, expedited replenishment, or other
+            qualified alternate supply source to protect production continuity.
+        - display_name: Suspend work order for material shortage
+          description: >-
+            Remove the work order from the active production window and revise
+            dependent production commitments until sufficient qualified material
+            becomes available.

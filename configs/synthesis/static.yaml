@@ -1,0 +1,63 @@
+dataset:
+  name: AdaExploreBench Static
+  slug: static
+  dataset_id: adaexplorebench_static
+  version: 7.0.0
+  mode: static
+  operation: fresh
+  template_pool: datasets/templates/domain_templates.json
+  template_audit: datasets/templates/domain_templates.audit.json
+  template_manifest: datasets/templates/domain_templates.manifest.json
+  output_dir: datasets/adaexplorebench_static
+  artifacts_dir: outputs/data_generation/adaexplorebench_static
+  seed: 17001
+  overwrite: false
+template_assignment: {strategy: seeded_balanced, seed: 23011}
+episode_layout:
+  action_case_count: 96
+  action_batch_count: 12
+  probe_budget_per_batch: 16
+  max_probe_cases_per_batch: 32
+  max_probe_budget: 32
+cache: {directory: .tmp/static_generation, enabled: true}
+resources:
+  cpu_worker_count: 16
+  max_core_visits_per_cell: 999999
+  proposal_block_size: 2048
+  checkpoint_interval: 1
+  progress_interval_seconds: 10
+search:
+  calibration_sample_count: 2048
+  parameter_screening_sample_count: 256
+  evaluation_sample_count: 2048
+  refinement_coupling_count: 2
+  refinement_settings_per_coupling: 2
+  held_out_pool_size: 16384
+  coupling_grid: [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9]
+  coupling_baseline: 0.5
+  reversal_additive_grid: [0.75, 0.8125, 0.875, 0.9375, 1.0, 1.0625, 1.125, 1.1875, 1.25]
+  reversal_additive_baseline: 1.0
+  reversal_threshold_grid: [-0.1, -0.075, -0.05, -0.025, 0.0, 0.025, 0.05, 0.075, 0.1]
+  reversal_threshold_baseline: 0.0
+  population_flip_range: [0.35, 0.65]
+  action_share_range: [0.15, 0.35]
+  early_rejection_confidence: 0.99
+  min_transition_probability: 0.005
+  q_flip_targets: [0.25, 0.5, 0.75]
+  q_action_share_range: [0.15, 0.35]
+  q_tolerance: 0.0000001
+  achieved_correlation_range: [0.1, 0.9]
+  minimum_mean_normalized_divergence: 0.03
+  fallback_raw_draw_multiplier: 40
+  conditional_branch_limit: 64
+  conditional_integration_points: 1024
+  beta_lookup_knots: 1024
+  saved_decimal_places: 6
+  solver_timeout_ms: 500
+semantic_review_config: configs/synthesis/semantic_review.yaml
+final_review: {enabled: false, config: configs/synthesis/final_review.yaml}
+dataset_selection: {enabled: false, config: configs/synthesis/dataset_selection.yaml}
+dynamic: null
+static:
+  episodes_per_cell: 1
+  visible_field_count: 8

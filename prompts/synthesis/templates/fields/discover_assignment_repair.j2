@@ -1,0 +1,10 @@
+Scenario: {{ scenario | tojson }}
+Field-inventory component: {{ component | tojson }}
+Blocking assignment issues: {{ issues | tojson }}
+Required component schema: {{ target_schema | tojson }}
+
+Repair only the rejected field assignments named by the issues according to the audit feedback reasons.
+
+Apply the smallest replacements/edits needed to make each description specific and unambiguous, align type and unit with that same measurement, assign the correct base pressure_direction. Clarify operands, numerator and denominator, target event, population, window, or aggregation only when the audit identifies a material ambiguity. Keep the field's measurement identity unchanged.
+
+Never add, remove, replace, rename, or reorder a complete field. Never change field_id or display_name. Repair only description, type, unit, or pressure_direction on a rejected field. Return only the smallest patch operations whose result satisfies all supplied corrected conditions and the required schema.

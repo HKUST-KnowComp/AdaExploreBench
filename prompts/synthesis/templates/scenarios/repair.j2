@@ -1,0 +1,13 @@
+Assembled scenario component: {{ component | tojson }}
+Blocking issues: {{ issues | tojson }}
+Required component schema: {{ target_schema | tojson }}
+Fixed domain description: {{ domain_description }}
+Fixed rule-family meanings: {{ family_meanings | tojson }}
+
+{% if blueprint %}
+Authoritative task blueprint: {{ blueprint | tojson }}
+Apply corrections only to operational_profiles or rule_families. Never modify domain_id, domain_description, template_id, task_id, description, agent_role, or actions.
+{% else %}
+No blueprint was supplied. Apply corrections only to description, agent_role, actions, operational_profiles, or rule_families. Never modify domain_id, domain_description, template_id, or task_id.
+{% endif %}
+Replace the complete affected semantic property when its internal coherence is at issue. Return only patch operations whose result satisfies the assembled single-scenario schema.

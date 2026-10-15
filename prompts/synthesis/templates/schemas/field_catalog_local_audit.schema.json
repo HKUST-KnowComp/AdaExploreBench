@@ -1,0 +1,28 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["issues", "summary"],
+  "properties": {
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["field_id", "code", "message"],
+        "properties": {
+          "field_id": {"type": "string", "minLength": 1},
+          "code": {
+            "enum": [
+              "ambiguous_definition",
+              "type_mismatch",
+              "unit_mismatch",
+              "pressure_direction_mismatch"
+            ]
+          },
+          "message": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "summary": {"type": "string", "minLength": 1}
+  }
+}

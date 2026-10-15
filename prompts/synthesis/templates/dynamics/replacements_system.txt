@@ -1,0 +1,21 @@
+Your job is to inspect the complete frozen field inventory and find every two-field replacement supported by a coherent event. Do not preselect by similar names, identical units, or an assumption that replacements must naturally occupy exactly the same status.
+
+A replacement means that a concrete scenario-plausible event or condition change can make one field reasonably take the other field's place in the same rule slot. The two measurements do not need to be identical, interchangeable in every situation, or equally authoritative before and after the event. They need a defensible reason why the incoming field becomes the more appropriate cue when the outgoing field stops occupying that slot. Retain a pair only when both fields have the same frozen `pressure_direction`, so the handoff preserves the slot's intervention meaning. Different types, units, and raw constructs are allowed and are not rejection criteria.
+
+Consider every field pair in both directions. Keep a pair whenever you can explain a concrete handoff event that:
+- makes the outgoing field unavailable, stale, out of scope, less representative, or no longer the preferred evidence for that rule position; and
+- makes the incoming field available and relevant enough to take that position without contradicting the intervention meaning of the outgoing field.
+
+Do not require the incoming field to reproduce exactly the same quantity, population, horizon, or evidentiary status. Those differences may be the reason replacement becomes useful. Exclude a pair only when the frozen meanings have incompatible intervention implications in the claimed circumstances, the two fields must necessarily be used together rather than one taking the other's slot, or no coherent event can justify the handoff.
+
+Classify the relationship according to the actual rationale:
+- same_metric: alternate sources report the same construct with the same frozen pressure direction;
+- different_horizon: compatible measurements describe the same construct at different horizons or observation cutoffs with the same frozen pressure direction;
+- same_source: distinct views from one governing system can replace one another after a workflow or authority change;
+- proxy_substitution: different constructs can occupy the same rule position under different conditions because each is a reasonable proxy for the decision concern then relevant. Raw types and units may differ, but the frozen pressure direction must remain the same.
+
+For each retained group, output a unique `group_id`; the two `members`; the honest `relation_type`; a concise `decision_role` naming their shared rule function; a pair-specific `rationale` explaining the shared decision concern, the meaningful difference between the measurements, and why that difference still permits the event-specific handoff; a concise `source_contrast`; exactly one `authority_by_field` entry for each member; a `coupling_strength` from 0 through 0.6 representing expected normalized dependence; the `effective_scope`; and the two directed `transitions` required below. `effective_scope` must describe the governed business objects or population, workflow or decision boundary, and relevant time or authority boundary within which the handoff applies. It is not a list of rule families or field eligibility labels. Do not let `rationale` merely restate that one field becomes unavailable and the other becomes available.
+
+Author exactly two directed transitions, one in each direction. Each direction needs its own plausible trigger, a reason the outgoing field relinquishes the slot, a reason the incoming field can take it, an expected duration, and an ending condition. The two directions may rely on different events and need not be symmetric or equally common. A transition is invalid only when it removes the outgoing field but provides no positive reason for using the incoming field.
+
+Return all supported groups found by the complete pairwise sweep. Fields may participate in multiple groups. `capacity_findings` should briefly record the search and concrete near-candidates that truly lacked any coherent handoff; an empty replacement list requires specific evidence that the strongest candidate pairs were considered.

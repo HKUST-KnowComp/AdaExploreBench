@@ -1,0 +1,17 @@
+{
+  "type": "object", "additionalProperties": false, "required": ["template_id", "fields"],
+  "properties": {
+    "template_id": {"type": "string", "minLength": 1},
+    "fields": {"type": "array", "minItems": 1, "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["field_id", "minimum", "maximum", "typical_range", "profile_beta", "parameter_basis"],
+      "properties": {
+        "field_id": {"type": "string", "minLength": 1}, "minimum": {"type": "number"}, "maximum": {"type": "number"},
+        "typical_range": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number"}},
+        "profile_beta": {"type": "object", "additionalProperties": false, "required": ["low", "mixed", "high"], "properties": {"low": {"$ref": "#/$defs/beta"}, "mixed": {"$ref": "#/$defs/beta"}, "high": {"$ref": "#/$defs/beta"}}},
+        "parameter_basis": {"type": "string", "minLength": 1}
+      }
+    }}
+  },
+  "$defs": {"beta": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number", "exclusiveMinimum": 0}}}
+}

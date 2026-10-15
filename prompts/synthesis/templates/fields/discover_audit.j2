@@ -1,0 +1,10 @@
+Scenario: {{ scenario | tojson }}
+Assigned field-inventory batch: {{ component | tojson }}
+
+Your job is to analyze each individual field assignment in the batch, examine them seperately, and check whether there is issue within the field independently.
+
+Check whether the description identifies one specific evidence quantity. Reject only when an omission allows the field to refer to materially different quantities, such as an unspecified operand order, numerator or denominator, rate time basis, probability target event or horizon, governed population, observation window, or aggregation. Do not require an executable formula, estimator convention, rounding rule, data-cleaning procedure, missing-data fallback, or sentinel when those details do not change the evidence identity, type, or unit. Confirm that type and unit match the described quantity. Confirm whether the type and unit match the description.
+
+Test pressure_direction across the full valid state space. Increasing the reported value must have one stable impact on intervention tendency within the same condition (it could flip across different circumstances or environment, but should stay stable for a fixed condition); reject a definition whose ordering is ambiguous across a valid boundary (Missing, unavailable, or inapplicable evidence is outside this numeric ordering and is not a pressure-direction boundary). However, take pressure direction only as the intervention tendency of the field value itself, such as risk level, severity, or urgency; do not consider the intervention capability of the agent, the cost of the action, or the execution capacity of the system.
+
+Return only fields with blocking defects; Give the field_id, one allowed issue code, and a precise reason that tells repair what assignment must change. Fields absent from issues will be accepted.

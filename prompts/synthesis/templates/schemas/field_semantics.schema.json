@@ -1,0 +1,21 @@
+{
+  "type": "object", "additionalProperties": false, "required": ["template_id", "fields"],
+  "properties": {
+    "template_id": {"type": "string", "minLength": 1},
+    "fields": {"type": "array", "minItems": 1, "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["field_id", "effect_strength", "eligible_families", "is_reversal", "reversal_rationale", "trigger", "semantics_before", "semantics_after", "reversal_reason"],
+      "properties": {
+        "field_id": {"type": "string", "minLength": 1},
+        "effect_strength": {"type": "number", "minimum": 0.1, "maximum": 1},
+        "eligible_families": {"type": "array", "uniqueItems": true, "items": {"enum": ["additive_aggregation", "conjunctive_gating", "disjunctive_sufficiency"]}},
+        "is_reversal": {"type": "boolean"},
+        "reversal_rationale": {"type": "string"},
+        "trigger": {"type": "string"},
+        "semantics_before": {"type": "string"},
+        "semantics_after": {"type": "string"},
+        "reversal_reason": {"type": "string"}
+      }
+    }}
+  }
+}

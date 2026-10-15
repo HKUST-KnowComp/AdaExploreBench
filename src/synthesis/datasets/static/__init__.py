@@ -1,0 +1,1 @@
+"""Static dataset generation stages."""

@@ -1,0 +1,4 @@
+target_episode_count: 256
+dimension_score_cutoff: 2.0
+output_filename: dynamic_episodes_published.jsonl
+report_filename: selection_report.json

@@ -1,0 +1,6 @@
+Scenario core: {{ scenario | tojson }}
+Complete frozen field catalog and decision semantics: {{ field_index | tojson }}
+Fields assigned to this output batch: {{ field_ids | tojson }}
+Sampling defaults: {{ defaults.sampling | tojson }}
+
+Return numerical parameters exactly for the supplied batch field IDs in the bound structured-output schema. Preserve the supplied template_id and field IDs exactly.

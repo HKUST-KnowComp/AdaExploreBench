@@ -1,0 +1,8 @@
+Scenario: {{ scenario | tojson }}
+Field-inventory component: {{ component | tojson }}
+Blocking issues: {{ issues | tojson }}
+Required component schema: {{ target_schema | tojson }}
+
+Repair only the deterministic field-catalog contract violations named by the issues before semantic audit begins. Preserve valid fields and the intended measurement inventory.
+
+Correct template identity or duplicate field IDs with the smallest valid patch. Do not change a valid unique field ID, alter field meaning, or add semantic content unrelated to the program validation issue. Return only patch operations whose result satisfies the required schema and deterministic validator.

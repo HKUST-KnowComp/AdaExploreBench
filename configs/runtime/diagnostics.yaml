@@ -1,0 +1,28 @@
+branches:
+  static_iid:
+    sampling: static_iid
+    rule_change: false
+    history_policy: eval_case_hidden
+    enable_probe_skip: true
+    least_probe_count: null
+  flip_50_no_change_control:
+    sampling: flip_50
+    rule_change: false
+    history_policy: eval_case_hidden
+    enable_probe_skip: true
+    least_probe_count: null
+  flip_50_eval_case_given:
+    sampling: flip_50
+    rule_change: true
+    history_policy: eval_case_given
+    enable_probe_skip: true
+    least_probe_count: null
+  flip_50_probe_required:
+    sampling: flip_50
+    rule_change: true
+    history_policy: eval_case_hidden
+    enable_probe_skip: false
+    least_probe_count: 4
+interaction:
+  max_probe_cases_per_batch: 16
+  allow_abstention: true

@@ -1,0 +1,126 @@
+# Role
+
+$agent_role
+
+Choose one of the four actions for every case. Your objective is to maximize
+Cumulative Utility — the total utility earned by submitted actions.
+
+Probes reveal information about the hidden rule. When choosing probe cases,
+avoid redundant probes, such as repeating the same case or using cases whose
+field values are nearly identical. The decision rule may or may not change
+during the episode.
+You are not told if or when it changes; a change can only happen right after
+you complete an action batch.
+
+# Actions
+
+$actions_text
+
+# Field relevance
+
+Some listed fields are distractors. Only a subset affects the hidden rule and
+utility; changing the other fields cannot change utility. The relevant subset
+is hidden, so infer it from probe results and action feedback. It may change if
+the decision rule changes during the episode.
+
+# Rule family
+
+The hidden rule uses exactly one of these four families:
+
+- `additive_aggregation`: combine weighted contributions from relevant fields.
+- `conjunctive_gating`: all conditions matter; the weakest condition controls.
+- `disjunctive_sufficiency`: any sufficient condition can control; the strongest
+  condition controls.
+- `lexicographic_priority`: inspect fields in priority order; the first
+  decisive field controls, otherwise fall back to the last field.
+
+Infer the family from probe results and action feedback. The family name and
+field roles are not given directly.
+
+# Utility scale
+
+Each submitted action receives a per-case utility from a fixed four-action
+mapping. Utilities are not normalized to `[-1, 1]`: across the full score
+range, an individual utility is approximately between `-0.33` and `0.98`.
+The theoretical lower and upper limits are about `-0.333` and `0.976`.
+Positive utility is better, negative utility is worse, and `0` is neutral;
+the four utilities for one case sum to approximately `0`. Abstaining also
+receives utility `0`, but is counted as incorrect. Maximize the sum of
+utilities across submitted actions.
+
+# Reply format
+
+Every reply is exactly one JSON object with two keys, `tool` and `arguments`,
+and nothing else — no prose, Markdown, rationale, or extra keys. Example:
+
+```json
+$reply_example
+```
+
+Use only a tool marked available in the latest `tool_usability`; an accepted
+call is final.
+
+# Tools
+
+## probe_batch — look at example cases before deciding
+
+Each probe shows one case and the utility of all four actions on it. Probe
+results are information only and earn no utility. Action feedback also exposes
+the utility of all four actions on every submitted case, so probing a case you
+will act on earns no extra information; spend probes only on cases you would
+otherwise not see.
+
+Two probe forms. A fresh case — give a value for every field in
+`raw_field_schema`:
+
+```json
+{"tool":"probe_batch","arguments":{"probes":[{"values":{"<field_id>":1}}]}}
+```
+
+A variation of a known case — start from a context ID returned by probe
+feedback and edit some of its fields:
+
+```json
+{"tool":"probe_batch","arguments":{"probes":[{"base_context_id":"<context_id>","changes":{}}]}}
+```
+
+Limits: one `probe_batch` call per batch window, at most
+$max_probe_cases_per_batch probes per call. Respect field types, feasibility
+constraints, and two-decimal precision for decimals.
+$probe_policy_text
+
+$request_next_batch_section
+
+## submit_action_batch — answer the pending cases
+
+```json
+{"tool":"submit_action_batch","arguments":{"batch_id":"batch_01","actions":{"<context_id>":"action_1"}}}
+```
+
+`pending_action_batch` lists $action_batch_size context IDs; give at most one
+action for each. You may omit IDs to abstain — abstained cases receive
+utility 0 and count as incorrect — and `actions` may even be empty.
+
+## calculator — optional arithmetic helper
+
+```json
+{"tool":"calculator","arguments":{"expressions":["total = (12.5+3)*4","sqrt(total)"]}}
+```
+
+Pure arithmetic: numbers, operators, parentheses, and the functions `abs`,
+`sqrt`, `min`, `max`, `sum`, `mean`, `round`, `floor`, `ceil`, `log`, `log10`,
+`exp`, `pow`. `name = expression` assigns a variable and returns its value,
+and within one call you may reference a variable before its assignment
+appears. Variables are call-local: to reuse a value in a later call, copy the
+number into the new expression. After a calculator call, use a different tool
+before calculating again — two calculator calls in a row are not allowed.
+
+$batch_flow
+
+# State and history
+
+The initial user message contains field descriptions and a `Current state` card.
+Later messages contain an `Environment result` followed by the latest card.
+Use the latest card for tool usability, `cumulative_utility`,
+`cumulative_probes`, pending cases, and remaining action batches; use
+conversation history for earlier probe/action evidence.

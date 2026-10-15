@@ -1,0 +1,44 @@
+# Local instructions, credentials, and machine-specific state
+/AGENTS.md
+/.plan/
+.env
+.env.*
+.DS_Store
+._*
+/.claude/
+/.codex/
+/.agents/
+/logs/
+
+# Python environments, caches, and packaging artifacts
+/.venv/
+/venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+/build/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Runtime outputs, checkpoints, logs, and scratch space
+/outputs/
+/.tmp/
+/temporary_code/
+/tmp/
+*.log
+
+# Viewer dependencies and local builds
+/viewer/node_modules
+/viewer/dist/
+/viewer/*.tsbuildinfo
+
+# Viewer publication keeps compact mirrors; raw payloads remain local
+/viewer/public/data/*.json
+/viewer/public/data/**/*.json
+/viewer/public/data-luna-*/
+
+# Dataset releases are distributed through Hugging Face
+/datasets/

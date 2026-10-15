@@ -1,0 +1,1635 @@
+{
+  "defaults": {
+    "rule_families": {
+      "additive_aggregation": {
+        "description": "Multiple fields provide directed, graded evidence whose normalized weighted sum determines the intervention level.",
+        "bias_range": [
+          -0.1,
+          0.1
+        ]
+      },
+      "conjunctive_gating": {
+        "description": "Intervention escalates only when multiple necessary conditions jointly satisfy their gates; a missing critical condition limits escalation.",
+        "threshold_quantiles": [
+          0.25,
+          0.75
+        ]
+      },
+      "disjunctive_sufficiency": {
+        "description": "Any one sufficiently strong field can independently provide enough evidence to justify escalation.",
+        "threshold_quantiles": [
+          0.25,
+          0.75
+        ]
+      },
+      "lexicographic_priority": {
+        "description": "Fields are evaluated in a fixed priority order, and decisive higher-priority evidence cannot be overridden by lower-priority fields.",
+        "indifference_band_range": [
+          0.2,
+          0.4
+        ],
+        "threshold_quantiles": [
+          0.25,
+          0.75
+        ]
+      }
+    },
+    "sampling": {
+      "beta_concentration_range": [
+        4,
+        12
+      ],
+      "conditional_field_model": "profile_beta",
+      "population_model": "operational_profile_mixture",
+      "replacement_dependency_model": "latent_beta_coupling"
+    }
+  },
+  "domains": {
+    "finance": {
+      "description": "Card authorization screening for incoming payment attempts.",
+      "templates": {
+        "card_authorization_intervention_v4": {
+          "actions": [
+            {
+              "description": "Approve the authorization without additional checks.",
+              "display_name": "Approve payment"
+            },
+            {
+              "description": "Require an additional cardholder verification step before approving.",
+              "display_name": "Step up verification"
+            },
+            {
+              "description": "Pause the authorization and queue it for analyst review.",
+              "display_name": "Hold for manual review"
+            },
+            {
+              "description": "Decline the authorization and log the attempt for follow-up.",
+              "display_name": "Decline payment"
+            }
+          ],
+          "agent_role": "The authorization analyst decides for each payment authorization case whether to approve, step up verification, hold for review, or decline.",
+          "description": "Card authorization screening for incoming payment attempts.",
+          "dynamics": {
+            "direction_reversals": {
+              "account_amount_ratio": {
+                "reversal_reason": "The verified regime change flips the decision semantics of account_amount_ratio.",
+                "semantics_after": "After the verified regime change, higher account_amount_ratio decreases intervention pressure.",
+                "semantics_before": "Higher account_amount_ratio increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets account_amount_ratio."
+              },
+              "proxy_anonymizer_probability": {
+                "reversal_reason": "The verified regime change flips the decision semantics of proxy_anonymizer_probability.",
+                "semantics_after": "After the verified regime change, higher proxy_anonymizer_probability decreases intervention pressure.",
+                "semantics_before": "Higher proxy_anonymizer_probability increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets proxy_anonymizer_probability."
+              },
+              "successful_transactions_180d": {
+                "reversal_reason": "The verified regime change flips the decision semantics of successful_transactions_180d.",
+                "semantics_after": "After the verified regime change, higher successful_transactions_180d decreases intervention pressure.",
+                "semantics_before": "Higher successful_transactions_180d increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets successful_transactions_180d."
+              },
+              "transaction_amount_usd": {
+                "reversal_reason": "The verified regime change flips the decision semantics of transaction_amount_usd.",
+                "semantics_after": "After the verified regime change, higher transaction_amount_usd decreases intervention pressure.",
+                "semantics_before": "Higher transaction_amount_usd increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets transaction_amount_usd."
+              },
+              "velocity_change_ratio_24h": {
+                "reversal_reason": "The verified regime change flips the decision semantics of velocity_change_ratio_24h.",
+                "semantics_after": "After the verified regime change, higher velocity_change_ratio_24h decreases intervention pressure.",
+                "semantics_before": "Higher velocity_change_ratio_24h increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets velocity_change_ratio_24h."
+              }
+            },
+            "replacements": {
+              "g001": {
+                "authority_by_field": {
+                  "account_amount_ratio": "account_amount_ratio is authoritative when the baseline-normalized view is required.",
+                  "transaction_amount_usd": "transaction_amount_usd is authoritative while the primary feed is fresh."
+                },
+                "decision_role": "Current-window pressure measurement",
+                "effective_scope": "All decisions in the current operating window.",
+                "joint_sampling": {
+                  "coupling_strength": 0.45
+                },
+                "members": [
+                  "transaction_amount_usd",
+                  "account_amount_ratio"
+                ],
+                "rationale": "transaction_amount_usd and account_amount_ratio measure the same underlying pressure at different normalizations.",
+                "relation_type": "same_metric",
+                "source_contrast": "Both fields derive from the same operational ledger with different normalization.",
+                "transitions": {
+                  "g001_t1": {
+                    "ending_condition": "The replacement ends when transaction_amount_usd passes reconciliation again.",
+                    "expected_duration": "The replacement remains in effect until the outgoing feed is restored.",
+                    "incoming_authority_reason": "The account_amount_ratio feed passes freshness and reconciliation checks for the current window.",
+                    "incoming_field": "account_amount_ratio",
+                    "outgoing_field": "transaction_amount_usd",
+                    "outgoing_retirement_reason": "The transaction_amount_usd feed is degraded or unavailable in the current window.",
+                    "trigger": "A reviewed account_amount_ratio feed becomes authoritative while transaction_amount_usd is degraded."
+                  },
+                  "g001_t2": {
+                    "ending_condition": "The replacement ends when account_amount_ratio passes reconciliation again.",
+                    "expected_duration": "The replacement remains in effect until the outgoing feed is restored.",
+                    "incoming_authority_reason": "The transaction_amount_usd feed passes freshness and reconciliation checks for the current window.",
+                    "incoming_field": "transaction_amount_usd",
+                    "outgoing_field": "account_amount_ratio",
+                    "outgoing_retirement_reason": "The account_amount_ratio feed is degraded or unavailable in the current window.",
+                    "trigger": "A reviewed transaction_amount_usd feed becomes authoritative while account_amount_ratio is degraded."
+                  }
+                }
+              },
+              "g002": {
+                "authority_by_field": {
+                  "successful_transactions_180d": "successful_transactions_180d is authoritative when long-horizon history is more reliable.",
+                  "velocity_change_ratio_24h": "velocity_change_ratio_24h is authoritative for short-horizon momentum."
+                },
+                "decision_role": "Momentum corroboration measurement",
+                "effective_scope": "All decisions in the current operating window.",
+                "joint_sampling": {
+                  "coupling_strength": 0.3
+                },
+                "members": [
+                  "velocity_change_ratio_24h",
+                  "successful_transactions_180d"
+                ],
+                "rationale": "velocity_change_ratio_24h and successful_transactions_180d corroborate whether current pressure is accelerating or mean-reverting.",
+                "relation_type": "proxy_substitution",
+                "source_contrast": "One field is a short-horizon ratio; the other a long-horizon accumulation.",
+                "transitions": {
+                  "g002_t1": {
+                    "ending_condition": "The replacement ends when velocity_change_ratio_24h passes reconciliation again.",
+                    "expected_duration": "The replacement remains in effect until the outgoing feed is restored.",
+                    "incoming_authority_reason": "The successful_transactions_180d feed passes freshness and reconciliation checks for the current window.",
+                    "incoming_field": "successful_transactions_180d",
+                    "outgoing_field": "velocity_change_ratio_24h",
+                    "outgoing_retirement_reason": "The velocity_change_ratio_24h feed is degraded or unavailable in the current window.",
+                    "trigger": "A reviewed successful_transactions_180d feed becomes authoritative while velocity_change_ratio_24h is degraded."
+                  },
+                  "g002_t2": {
+                    "ending_condition": "The replacement ends when successful_transactions_180d passes reconciliation again.",
+                    "expected_duration": "The replacement remains in effect until the outgoing feed is restored.",
+                    "incoming_authority_reason": "The velocity_change_ratio_24h feed passes freshness and reconciliation checks for the current window.",
+                    "incoming_field": "velocity_change_ratio_24h",
+                    "outgoing_field": "successful_transactions_180d",
+                    "outgoing_retirement_reason": "The successful_transactions_180d feed is degraded or unavailable in the current window.",
+                    "trigger": "A reviewed velocity_change_ratio_24h feed becomes authoritative while successful_transactions_180d is degraded."
+                  }
+                }
+              }
+            }
+          },
+          "fields": {
+            "account_amount_ratio": {
+              "description": "Account amount ratio: the baseline-normalized counterpart signal for this template.",
+              "display_name": "Account amount ratio",
+              "effect_strength": 0.55,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 20.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                0.2,
+                3.0
+              ],
+              "unit": "ratio"
+            },
+            "interface_render_event_count": {
+              "description": "Interface render events: the telemetry channel uncorrelated with the decision for this template.",
+              "display_name": "Interface render events",
+              "effect_strength": 0.4,
+              "eligible_families": [],
+              "is_reversal": false,
+              "maximum": 200.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                5.0,
+                120.0
+              ],
+              "unit": "count"
+            },
+            "proxy_anonymizer_probability": {
+              "description": "Proxy anonymizer probability: the external corroboration signal for this template.",
+              "display_name": "Proxy anonymizer probability",
+              "effect_strength": 0.65,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                0.0,
+                0.4
+              ],
+              "unit": "probability"
+            },
+            "successful_transactions_180d": {
+              "description": "Successful transactions 180d: the trailing history counter-signal for this template.",
+              "display_name": "Successful transactions 180d",
+              "effect_strength": 0.5,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 900.0,
+              "minimum": 0.0,
+              "pressure_direction": -1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                20.0,
+                400.0
+              ],
+              "unit": "count"
+            },
+            "transaction_amount_usd": {
+              "description": "Payment amount: the current-window pressure signal for this template.",
+              "display_name": "Payment amount",
+              "effect_strength": 0.6,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 5000.0,
+              "minimum": 0.01,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                10.0,
+                600.0
+              ],
+              "unit": "USD"
+            },
+            "velocity_change_ratio_24h": {
+              "description": "Velocity change ratio: the rate-of-change pressure signal for this template.",
+              "display_name": "Velocity change ratio",
+              "effect_strength": 0.7,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 12.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                0.5,
+                4.0
+              ],
+              "unit": "ratio"
+            }
+          },
+          "operational_profiles": {
+            "high": {
+              "description": "Cases sit in the stressed operating regime.",
+              "weight": 0.25
+            },
+            "low": {
+              "description": "Cases sit in the calm operating regime.",
+              "weight": 0.4
+            },
+            "mixed": {
+              "description": "Cases mix calm and stressed signals.",
+              "weight": 0.35
+            }
+          },
+          "rule_families": {
+            "additive_aggregation": {
+              "description": "Intervention pressure aggregates weighted evidence across the relevant fields."
+            },
+            "conjunctive_gating": {
+              "description": "Intervention pressure is set by the least satisfied gate among the relevant fields."
+            },
+            "disjunctive_sufficiency": {
+              "description": "Any single sufficient cue among the relevant fields sets intervention pressure."
+            },
+            "lexicographic_priority": {
+              "approved_priority_orders": [
+                {
+                  "fields": [
+                    "transaction_amount_usd",
+                    "velocity_change_ratio_24h",
+                    "proxy_anonymizer_probability"
+                  ],
+                  "rationale": "Current pressure dominates, then momentum, then external corroboration."
+                },
+                {
+                  "fields": [
+                    "account_amount_ratio",
+                    "successful_transactions_180d",
+                    "proxy_anonymizer_probability"
+                  ],
+                  "rationale": "Baseline-normalized pressure dominates, then history, then corroboration."
+                },
+                {
+                  "fields": [
+                    "transaction_amount_usd",
+                    "successful_transactions_180d",
+                    "proxy_anonymizer_probability"
+                  ],
+                  "rationale": "Current pressure dominates, then history, then corroboration."
+                }
+              ],
+              "description": "A higher-priority concern controls the decision and cannot be overridden by lower-priority evidence."
+            }
+          },
+          "task_id": "finance_card_authorization_screening_v4"
+        }
+      }
+    },
+    "logistics": {
+      "description": "Linehaul route escalation for delayed freight corridors.",
+      "templates": {
+        "route_escalation_intervention_v4": {
+          "actions": [
+            {
+              "description": "Keep the current route and schedule unchanged.",
+              "display_name": "Keep planned route"
+            },
+            {
+              "description": "Add a buffer stop to absorb the accumulating delay.",
+              "display_name": "Add buffer stop"
+            },
+            {
+              "description": "Reroute priority freight onto the recovery corridor.",
+              "display_name": "Reroute priority freight"
+            },
+            {
+              "description": "Charter additional recovery capacity for the corridor.",
+              "display_name": "Charter recovery capacity"
+            }
+          ],
+          "agent_role": "The network analyst decides for each delayed corridor case whether to keep the plan, add buffer, reroute priority freight, or charter recovery capacity.",
+          "description": "Linehaul route escalation for delayed freight corridors.",
+          "dynamics": {
+            "direction_reversals": {
+              "current_delay_minutes": {
+                "reversal_reason": "The verified regime change flips the decision semantics of current_delay_minutes.",
+                "semantics_after": "After the verified regime change, higher current_delay_minutes decreases intervention pressure.",
+                "semantics_before": "Higher current_delay_minutes increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets current_delay_minutes."
+              },
+              "delay_growth_ratio_6h": {
+                "reversal_reason": "The verified regime change flips the decision semantics of delay_growth_ratio_6h.",
+                "semantics_after": "After the verified regime change, higher delay_growth_ratio_6h decreases intervention pressure.",
+                "semantics_before": "Higher delay_growth_ratio_6h increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets delay_growth_ratio_6h."
+              },
+              "ontime_deliveries_180d": {
+                "reversal_reason": "The verified regime change flips the decision semantics of ontime_deliveries_180d.",
+                "semantics_after": "After the verified regime change, higher ontime_deliveries_180d decreases intervention pressure.",
+                "semantics_before": "Higher ontime_deliveries_180d increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets ontime_deliveries_180d."
+              },
+              "route_delay_ratio": {
+                "reversal_reason": "The verified regime change flips the decision semantics of route_delay_ratio.",
+                "semantics_after": "After the verified regime change, higher route_delay_ratio decreases intervention pressure.",
+                "semantics_before": "Higher route_delay_ratio increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets route_delay_ratio."
+              },
+              "weather_disruption_score": {
+                "reversal_reason": "The verified regime change flips the decision semantics of weather_disruption_score.",
+                "semantics_after": "After the verified regime change, higher weather_disruption_score decreases intervention pressure.",
+                "semantics_before": "Higher weather_disruption_score increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets weather_disruption_score."
+              }
+            },
+            "replacements": {
+              "g001": {
+                "authority_by_field": {
+                  "current_delay_minutes": "current_delay_minutes is authoritative while the primary feed is fresh.",
+                  "route_delay_ratio": "route_delay_ratio is authoritative when the baseline-normalized view is required."
+                },
+                "decision_role": "Current-window pressure measurement",
+                "effective_scope": "All decisions in the current operating window.",
+                "joint_sampling": {
+                  "coupling_strength": 0.45
+                },
+                "members": [
+                  "current_delay_minutes",
+                  "route_delay_ratio"
+                ],
+                "rationale": "current_delay_minutes and route_delay_ratio measure the same underlying pressure at different normalizations.",
+                "relation_type": "same_metric",
+                "source_contrast": "Both fields derive from the same operational ledger with different normalization.",
+                "transitions": {
+                  "g001_t1": {
+                    "ending_condition": "The replacement ends when current_delay_minutes passes reconciliation again.",
+                    "expected_duration": "The replacement remains in effect until the outgoing feed is restored.",
+                    "incoming_authority_reason": "The route_delay_ratio feed passes freshness and reconciliation checks for the current window.",
+                    "incoming_field": "route_delay_ratio",
+                    "outgoing_field": "current_delay_minutes",
+                    "outgoing_retirement_reason": "The current_delay_minutes feed is degraded or unavailable in the current window.",
+                    "trigger": "A reviewed route_delay_ratio feed becomes authoritative while current_delay_minutes is degraded."
+                  },
+                  "g001_t2": {
+                    "ending_condition": "The replacement ends when route_delay_ratio passes reconciliation again.",
+                    "expected_duration": "The replacement remains in effect until the outgoing feed is restored.",
+                    "incoming_authority_reason": "The current_delay_minutes feed passes freshness and reconciliation checks for the current window.",
+                    "incoming_field": "current_delay_minutes",
+                    "outgoing_field": "route_delay_ratio",
+                    "outgoing_retirement_reason": "The route_delay_ratio feed is degraded or unavailable in the current window.",
+                    "trigger": "A reviewed current_delay_minutes feed becomes authoritative while route_delay_ratio is degraded."
+                  }
+                }
+              },
+              "g002": {
+                "authority_by_field": {
+                  "delay_growth_ratio_6h": "delay_growth_ratio_6h is authoritative for short-horizon momentum.",
+                  "ontime_deliveries_180d": "ontime_deliveries_180d is authoritative when long-horizon history is more reliable."
+                },
+                "decision_role": "Momentum corroboration measurement",
+                "effective_scope": "All decisions in the current operating window.",
+                "joint_sampling": {
+                  "coupling_strength": 0.3
+                },
+                "members": [
+                  "delay_growth_ratio_6h",
+                  "ontime_deliveries_180d"
+                ],
+                "rationale": "delay_growth_ratio_6h and ontime_deliveries_180d corroborate whether current pressure is accelerating or mean-reverting.",
+                "relation_type": "proxy_substitution",
+                "source_contrast": "One field is a short-horizon ratio; the other a long-horizon accumulation.",
+                "transitions": {
+                  "g002_t1": {
+                    "ending_condition": "The replacement ends when delay_growth_ratio_6h passes reconciliation again.",
+                    "expected_duration": "The replacement remains in effect until the outgoing feed is restored.",
+                    "incoming_authority_reason": "The ontime_deliveries_180d feed passes freshness and reconciliation checks for the current window.",
+                    "incoming_field": "ontime_deliveries_180d",
+                    "outgoing_field": "delay_growth_ratio_6h",
+                    "outgoing_retirement_reason": "The delay_growth_ratio_6h feed is degraded or unavailable in the current window.",
+                    "trigger": "A reviewed ontime_deliveries_180d feed becomes authoritative while delay_growth_ratio_6h is degraded."
+                  },
+                  "g002_t2": {
+                    "ending_condition": "The replacement ends when ontime_deliveries_180d passes reconciliation again.",
+                    "expected_duration": "The replacement remains in effect until the outgoing feed is restored.",
+                    "incoming_authority_reason": "The delay_growth_ratio_6h feed passes freshness and reconciliation checks for the current window.",
+                    "incoming_field": "delay_growth_ratio_6h",
+                    "outgoing_field": "ontime_deliveries_180d",
+                    "outgoing_retirement_reason": "The ontime_deliveries_180d feed is degraded or unavailable in the current window.",
+                    "trigger": "A reviewed delay_growth_ratio_6h feed becomes authoritative while ontime_deliveries_180d is degraded."
+                  }
+                }
+              }
+            }
+          },
+          "fields": {
+            "current_delay_minutes": {
+              "description": "Current delay: the current-window pressure signal for this template.",
+              "display_name": "Current delay",
+              "effect_strength": 0.6,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 720.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                5.0,
+                240.0
+              ],
+              "unit": "minutes"
+            },
+            "delay_growth_ratio_6h": {
+              "description": "Delay growth ratio: the rate-of-change pressure signal for this template.",
+              "display_name": "Delay growth ratio",
+              "effect_strength": 0.7,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 8.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                0.5,
+                3.0
+              ],
+              "unit": "ratio"
+            },
+            "ontime_deliveries_180d": {
+              "description": "On-time deliveries 180d: the trailing history counter-signal for this template.",
+              "display_name": "On-time deliveries 180d",
+              "effect_strength": 0.5,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 5000.0,
+              "minimum": 0.0,
+              "pressure_direction": -1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                100.0,
+                2500.0
+              ],
+              "unit": "count"
+            },
+            "route_delay_ratio": {
+              "description": "Route delay ratio: the baseline-normalized counterpart signal for this template.",
+              "display_name": "Route delay ratio",
+              "effect_strength": 0.55,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 12.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                0.5,
+                4.0
+              ],
+              "unit": "ratio"
+            },
+            "telematics_heartbeat_count": {
+              "description": "Telematics heartbeats: the telemetry channel uncorrelated with the decision for this template.",
+              "display_name": "Telematics heartbeats",
+              "effect_strength": 0.4,
+              "eligible_families": [],
+              "is_reversal": false,
+              "maximum": 300.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                10.0,
+                150.0
+              ],
+              "unit": "count"
+            },
+            "weather_disruption_score": {
+              "description": "Weather disruption score: the external corroboration signal for this template.",
+              "display_name": "Weather disruption score",
+              "effect_strength": 0.65,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                0.0,
+                0.6
+              ],
+              "unit": "score"
+            }
+          },
+          "operational_profiles": {
+            "high": {
+              "description": "Cases sit in the stressed operating regime.",
+              "weight": 0.25
+            },
+            "low": {
+              "description": "Cases sit in the calm operating regime.",
+              "weight": 0.4
+            },
+            "mixed": {
+              "description": "Cases mix calm and stressed signals.",
+              "weight": 0.35
+            }
+          },
+          "rule_families": {
+            "additive_aggregation": {
+              "description": "Intervention pressure aggregates weighted evidence across the relevant fields."
+            },
+            "conjunctive_gating": {
+              "description": "Intervention pressure is set by the least satisfied gate among the relevant fields."
+            },
+            "disjunctive_sufficiency": {
+              "description": "Any single sufficient cue among the relevant fields sets intervention pressure."
+            },
+            "lexicographic_priority": {
+              "approved_priority_orders": [
+                {
+                  "fields": [
+                    "current_delay_minutes",
+                    "delay_growth_ratio_6h",
+                    "weather_disruption_score"
+                  ],
+                  "rationale": "Current pressure dominates, then momentum, then external corroboration."
+                },
+                {
+                  "fields": [
+                    "route_delay_ratio",
+                    "ontime_deliveries_180d",
+                    "weather_disruption_score"
+                  ],
+                  "rationale": "Baseline-normalized pressure dominates, then history, then corroboration."
+                },
+                {
+                  "fields": [
+                    "current_delay_minutes",
+                    "ontime_deliveries_180d",
+                    "weather_disruption_score"
+                  ],
+                  "rationale": "Current pressure dominates, then history, then corroboration."
+                }
+              ],
+              "description": "A higher-priority concern controls the decision and cannot be overridden by lower-priority evidence."
+            }
+          },
+          "task_id": "logistics_route_escalation_v4"
+        }
+      }
+    },
+    "manufacturing": {
+      "description": "Line quality escalation for discrete manufacturing cells.",
+      "templates": {
+        "line_quality_intervention_v4": {
+          "actions": [
+            {
+              "description": "Continue the production run under standard monitoring.",
+              "display_name": "Continue run"
+            },
+            {
+              "description": "Increase inspection sampling for the remainder of the run.",
+              "display_name": "Increase inspection sampling"
+            },
+            {
+              "description": "Reduce line speed and recalibrate the suspect station.",
+              "display_name": "Slow line and recalibrate"
+            },
+            {
+              "description": "Stop the line for immediate maintenance intervention.",
+              "display_name": "Stop line for maintenance"
+            }
+          ],
+          "agent_role": "The quality engineer decides for each production run whether to continue, increase sampling, slow and recalibrate, or stop the line.",
+          "description": "Line quality escalation for discrete manufacturing cells.",
+          "dynamics": {
+            "direction_reversals": {
+              "accepted_units_180d": {
+                "reversal_reason": "The verified regime change flips the decision semantics of accepted_units_180d.",
+                "semantics_after": "After the verified regime change, higher accepted_units_180d decreases intervention pressure.",
+                "semantics_before": "Higher accepted_units_180d increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets accepted_units_180d."
+              },
+              "current_scrap_rate": {
+                "reversal_reason": "The verified regime change flips the decision semantics of current_scrap_rate.",
+                "semantics_after": "After the verified regime change, higher current_scrap_rate decreases intervention pressure.",
+                "semantics_before": "Higher current_scrap_rate increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets current_scrap_rate."
+              },
+              "line_scrap_ratio": {
+                "reversal_reason": "The verified regime change flips the decision semantics of line_scrap_ratio.",
+                "semantics_after": "After the verified regime change, higher line_scrap_ratio decreases intervention pressure.",
+                "semantics_before": "Higher line_scrap_ratio increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets line_scrap_ratio."
+              },
+              "scrap_growth_ratio_shift": {
+                "reversal_reason": "The verified regime change flips the decision semantics of scrap_growth_ratio_shift.",
+                "semantics_after": "After the verified regime change, higher scrap_growth_ratio_shift decreases intervention pressure.",
+                "semantics_before": "Higher scrap_growth_ratio_shift increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets scrap_growth_ratio_shift."
+              },
+              "supplier_lot_risk_score": {
+                "reversal_reason": "The verified regime change flips the decision semantics of supplier_lot_risk_score.",
+                "semantics_after": "After the verified regime change, higher supplier_lot_risk_score decreases intervention pressure.",
+                "semantics_before": "Higher supplier_lot_risk_score increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets supplier_lot_risk_score."
+              }
+            },
+            "replacements": {
+              "g001": {
+                "authority_by_field": {
+                  "current_scrap_rate": "current_scrap_rate is authoritative while the primary feed is fresh.",
+                  "line_scrap_ratio": "line_scrap_ratio is authoritative when the baseline-normalized view is required."
+                },
+                "decision_role": "Current-window pressure measurement",
+                "effective_scope": "All decisions in the current operating window.",
+                "joint_sampling": {
+                  "coupling_strength": 0.45
+                },
+                "members": [
+                  "current_scrap_rate",
+                  "line_scrap_ratio"
+                ],
+                "rationale": "current_scrap_rate and line_scrap_ratio measure the same underlying pressure at different normalizations.",
+                "relation_type": "same_metric",
+                "source_contrast": "Both fields derive from the same operational ledger with different normalization.",
+                "transitions": {
+                  "g001_t1": {
+                    "ending_condition": "The replacement ends when current_scrap_rate passes reconciliation again.",
+                    "expected_duration": "The replacement remains in effect until the outgoing feed is restored.",
+                    "incoming_authority_reason": "The line_scrap_ratio feed passes freshness and reconciliation checks for the current window.",
+                    "incoming_field": "line_scrap_ratio",
+                    "outgoing_field": "current_scrap_rate",
+                    "outgoing_retirement_reason": "The current_scrap_rate feed is degraded or unavailable in the current window.",
+                    "trigger": "A reviewed line_scrap_ratio feed becomes authoritative while current_scrap_rate is degraded."
+                  },
+                  "g001_t2": {
+                    "ending_condition": "The replacement ends when line_scrap_ratio passes reconciliation again.",
+                    "expected_duration": "The replacement remains in effect until the outgoing feed is restored.",
+                    "incoming_authority_reason": "The current_scrap_rate feed passes freshness and reconciliation checks for the current window.",
+                    "incoming_field": "current_scrap_rate",
+                    "outgoing_field": "line_scrap_ratio",
+                    "outgoing_retirement_reason": "The line_scrap_ratio feed is degraded or unavailable in the current window.",
+                    "trigger": "A reviewed current_scrap_rate feed becomes authoritative while line_scrap_ratio is degraded."
+                  }
+                }
+              },
+              "g002": {
+                "authority_by_field": {
+                  "accepted_units_180d": "accepted_units_180d is authoritative when long-horizon history is more reliable.",
+                  "scrap_growth_ratio_shift": "scrap_growth_ratio_shift is authoritative for short-horizon momentum."
+                },
+                "decision_role": "Momentum corroboration measurement",
+                "effective_scope": "All decisions in the current operating window.",
+                "joint_sampling": {
+                  "coupling_strength": 0.3
+                },
+                "members": [
+                  "scrap_growth_ratio_shift",
+                  "accepted_units_180d"
+                ],
+                "rationale": "scrap_growth_ratio_shift and accepted_units_180d corroborate whether current pressure is accelerating or mean-reverting.",
+                "relation_type": "proxy_substitution",
+                "source_contrast": "One field is a short-horizon ratio; the other a long-horizon accumulation.",
+                "transitions": {
+                  "g002_t1": {
+                    "ending_condition": "The replacement ends when scrap_growth_ratio_shift passes reconciliation again.",
+                    "expected_duration": "The replacement remains in effect until the outgoing feed is restored.",
+                    "incoming_authority_reason": "The accepted_units_180d feed passes freshness and reconciliation checks for the current window.",
+                    "incoming_field": "accepted_units_180d",
+                    "outgoing_field": "scrap_growth_ratio_shift",
+                    "outgoing_retirement_reason": "The scrap_growth_ratio_shift feed is degraded or unavailable in the current window.",
+                    "trigger": "A reviewed accepted_units_180d feed becomes authoritative while scrap_growth_ratio_shift is degraded."
+                  },
+                  "g002_t2": {
+                    "ending_condition": "The replacement ends when accepted_units_180d passes reconciliation again.",
+                    "expected_duration": "The replacement remains in effect until the outgoing feed is restored.",
+                    "incoming_authority_reason": "The scrap_growth_ratio_shift feed passes freshness and reconciliation checks for the current window.",
+                    "incoming_field": "scrap_growth_ratio_shift",
+                    "outgoing_field": "accepted_units_180d",
+                    "outgoing_retirement_reason": "The accepted_units_180d feed is degraded or unavailable in the current window.",
+                    "trigger": "A reviewed scrap_growth_ratio_shift feed becomes authoritative while accepted_units_180d is degraded."
+                  }
+                }
+              }
+            }
+          },
+          "fields": {
+            "accepted_units_180d": {
+              "description": "Accepted units 180d: the trailing history counter-signal for this template.",
+              "display_name": "Accepted units 180d",
+              "effect_strength": 0.5,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 90000.0,
+              "minimum": 0.0,
+              "pressure_direction": -1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                5000.0,
+                50000.0
+              ],
+              "unit": "count"
+            },
+            "current_scrap_rate": {
+              "description": "Current scrap rate: the current-window pressure signal for this template.",
+              "display_name": "Current scrap rate",
+              "effect_strength": 0.6,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 0.4,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                0.0,
+                0.1
+              ],
+              "unit": "rate"
+            },
+            "line_scrap_ratio": {
+              "description": "Line scrap ratio: the baseline-normalized counterpart signal for this template.",
+              "display_name": "Line scrap ratio",
+              "effect_strength": 0.55,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 10.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                0.5,
+                3.0
+              ],
+              "unit": "ratio"
+            },
+            "scrap_growth_ratio_shift": {
+              "description": "Scrap growth ratio: the rate-of-change pressure signal for this template.",
+              "display_name": "Scrap growth ratio",
+              "effect_strength": 0.7,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 9.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                0.5,
+                3.5
+              ],
+              "unit": "ratio"
+            },
+            "sensor_heartbeat_count": {
+              "description": "Sensor heartbeats: the telemetry channel uncorrelated with the decision for this template.",
+              "display_name": "Sensor heartbeats",
+              "effect_strength": 0.4,
+              "eligible_families": [],
+              "is_reversal": false,
+              "maximum": 500.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                20.0,
+                250.0
+              ],
+              "unit": "count"
+            },
+            "supplier_lot_risk_score": {
+              "description": "Supplier lot risk score: the external corroboration signal for this template.",
+              "display_name": "Supplier lot risk score",
+              "effect_strength": 0.65,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                0.0,
+                0.5
+              ],
+              "unit": "score"
+            }
+          },
+          "operational_profiles": {
+            "high": {
+              "description": "Cases sit in the stressed operating regime.",
+              "weight": 0.25
+            },
+            "low": {
+              "description": "Cases sit in the calm operating regime.",
+              "weight": 0.4
+            },
+            "mixed": {
+              "description": "Cases mix calm and stressed signals.",
+              "weight": 0.35
+            }
+          },
+          "rule_families": {
+            "additive_aggregation": {
+              "description": "Intervention pressure aggregates weighted evidence across the relevant fields."
+            },
+            "conjunctive_gating": {
+              "description": "Intervention pressure is set by the least satisfied gate among the relevant fields."
+            },
+            "disjunctive_sufficiency": {
+              "description": "Any single sufficient cue among the relevant fields sets intervention pressure."
+            },
+            "lexicographic_priority": {
+              "approved_priority_orders": [
+                {
+                  "fields": [
+                    "current_scrap_rate",
+                    "scrap_growth_ratio_shift",
+                    "supplier_lot_risk_score"
+                  ],
+                  "rationale": "Current pressure dominates, then momentum, then external corroboration."
+                },
+                {
+                  "fields": [
+                    "line_scrap_ratio",
+                    "accepted_units_180d",
+                    "supplier_lot_risk_score"
+                  ],
+                  "rationale": "Baseline-normalized pressure dominates, then history, then corroboration."
+                },
+                {
+                  "fields": [
+                    "current_scrap_rate",
+                    "accepted_units_180d",
+                    "supplier_lot_risk_score"
+                  ],
+                  "rationale": "Current pressure dominates, then history, then corroboration."
+                }
+              ],
+              "description": "A higher-priority concern controls the decision and cannot be overridden by lower-priority evidence."
+            }
+          },
+          "task_id": "manufacturing_line_quality_v4"
+        }
+      }
+    },
+    "retail": {
+      "description": "Store-level replenishment planning for the upcoming selling period.",
+      "templates": {
+        "store_replenishment_intervention_v4": {
+          "actions": [
+            {
+              "description": "Leave the scheduled replenishment plan unchanged.",
+              "display_name": "Keep routine plan"
+            },
+            {
+              "description": "Accelerate the scheduled replenishment delivery.",
+              "display_name": "Expedite replenishment"
+            },
+            {
+              "description": "Reserve priority stock allocation ahead of other stores.",
+              "display_name": "Reserve priority allocation"
+            },
+            {
+              "description": "Trigger an emergency allocation from the regional buffer.",
+              "display_name": "Emergency allocation"
+            }
+          ],
+          "agent_role": "The replenishment analyst decides for each store-SKU case whether to keep the routine plan, expedite, reserve priority allocation, or trigger an emergency allocation.",
+          "description": "Store-level replenishment planning for the upcoming selling period.",
+          "dynamics": {
+            "direction_reversals": {
+              "baseline_demand_ratio": {
+                "reversal_reason": "The verified regime change flips the decision semantics of baseline_demand_ratio.",
+                "semantics_after": "After the verified regime change, higher baseline_demand_ratio decreases intervention pressure.",
+                "semantics_before": "Higher baseline_demand_ratio increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets baseline_demand_ratio."
+              },
+              "current_demand_units_24h": {
+                "reversal_reason": "The verified regime change flips the decision semantics of current_demand_units_24h.",
+                "semantics_after": "After the verified regime change, higher current_demand_units_24h decreases intervention pressure.",
+                "semantics_before": "Higher current_demand_units_24h increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets current_demand_units_24h."
+              },
+              "demand_velocity_ratio_24h": {
+                "reversal_reason": "The verified regime change flips the decision semantics of demand_velocity_ratio_24h.",
+                "semantics_after": "After the verified regime change, higher demand_velocity_ratio_24h decreases intervention pressure.",
+                "semantics_before": "Higher demand_velocity_ratio_24h increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets demand_velocity_ratio_24h."
+              },
+              "fulfilled_demand_units_30d": {
+                "reversal_reason": "The verified regime change flips the decision semantics of fulfilled_demand_units_30d.",
+                "semantics_after": "After the verified regime change, higher fulfilled_demand_units_30d decreases intervention pressure.",
+                "semantics_before": "Higher fulfilled_demand_units_30d increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets fulfilled_demand_units_30d."
+              },
+              "supplier_disruption_score": {
+                "reversal_reason": "The verified regime change flips the decision semantics of supplier_disruption_score.",
+                "semantics_after": "After the verified regime change, higher supplier_disruption_score decreases intervention pressure.",
+                "semantics_before": "Higher supplier_disruption_score increases intervention pressure under the standing regime.",
+                "trigger": "A verified operational regime change reinterprets supplier_disruption_score."
+              }
+            },
+            "replacements": {
+              "g001": {
+                "authority_by_field": {
+                  "baseline_demand_ratio": "baseline_demand_ratio is authoritative when the baseline-normalized view is required.",
+                  "current_demand_units_24h": "current_demand_units_24h is authoritative while the primary feed is fresh."
+                },
+                "decision_role": "Current-window pressure measurement",
+                "effective_scope": "All decisions in the current operating window.",
+                "joint_sampling": {
+                  "coupling_strength": 0.45
+                },
+                "members": [
+                  "current_demand_units_24h",
+                  "baseline_demand_ratio"
+                ],
+                "rationale": "current_demand_units_24h and baseline_demand_ratio measure the same underlying pressure at different normalizations.",
+                "relation_type": "same_metric",
+                "source_contrast": "Both fields derive from the same operational ledger with different normalization.",
+                "transitions": {
+                  "g001_t1": {
+                    "ending_condition": "The replacement ends when current_demand_units_24h passes reconciliation again.",
+                    "expected_duration": "The replacement remains in effect until the outgoing feed is restored.",
+                    "incoming_authority_reason": "The baseline_demand_ratio feed passes freshness and reconciliation checks for the current window.",
+                    "incoming_field": "baseline_demand_ratio",
+                    "outgoing_field": "current_demand_units_24h",
+                    "outgoing_retirement_reason": "The current_demand_units_24h feed is degraded or unavailable in the current window.",
+                    "trigger": "A reviewed baseline_demand_ratio feed becomes authoritative while current_demand_units_24h is degraded."
+                  },
+                  "g001_t2": {
+                    "ending_condition": "The replacement ends when baseline_demand_ratio passes reconciliation again.",
+                    "expected_duration": "The replacement remains in effect until the outgoing feed is restored.",
+                    "incoming_authority_reason": "The current_demand_units_24h feed passes freshness and reconciliation checks for the current window.",
+                    "incoming_field": "current_demand_units_24h",
+                    "outgoing_field": "baseline_demand_ratio",
+                    "outgoing_retirement_reason": "The baseline_demand_ratio feed is degraded or unavailable in the current window.",
+                    "trigger": "A reviewed current_demand_units_24h feed becomes authoritative while baseline_demand_ratio is degraded."
+                  }
+                }
+              },
+              "g002": {
+                "authority_by_field": {
+                  "demand_velocity_ratio_24h": "demand_velocity_ratio_24h is authoritative for short-horizon momentum.",
+                  "fulfilled_demand_units_30d": "fulfilled_demand_units_30d is authoritative when long-horizon history is more reliable."
+                },
+                "decision_role": "Momentum corroboration measurement",
+                "effective_scope": "All decisions in the current operating window.",
+                "joint_sampling": {
+                  "coupling_strength": 0.3
+                },
+                "members": [
+                  "demand_velocity_ratio_24h",
+                  "fulfilled_demand_units_30d"
+                ],
+                "rationale": "demand_velocity_ratio_24h and fulfilled_demand_units_30d corroborate whether current pressure is accelerating or mean-reverting.",
+                "relation_type": "proxy_substitution",
+                "source_contrast": "One field is a short-horizon ratio; the other a long-horizon accumulation.",
+                "transitions": {
+                  "g002_t1": {
+                    "ending_condition": "The replacement ends when demand_velocity_ratio_24h passes reconciliation again.",
+                    "expected_duration": "The replacement remains in effect until the outgoing feed is restored.",
+                    "incoming_authority_reason": "The fulfilled_demand_units_30d feed passes freshness and reconciliation checks for the current window.",
+                    "incoming_field": "fulfilled_demand_units_30d",
+                    "outgoing_field": "demand_velocity_ratio_24h",
+                    "outgoing_retirement_reason": "The demand_velocity_ratio_24h feed is degraded or unavailable in the current window.",
+                    "trigger": "A reviewed fulfilled_demand_units_30d feed becomes authoritative while demand_velocity_ratio_24h is degraded."
+                  },
+                  "g002_t2": {
+                    "ending_condition": "The replacement ends when fulfilled_demand_units_30d passes reconciliation again.",
+                    "expected_duration": "The replacement remains in effect until the outgoing feed is restored.",
+                    "incoming_authority_reason": "The demand_velocity_ratio_24h feed passes freshness and reconciliation checks for the current window.",
+                    "incoming_field": "demand_velocity_ratio_24h",
+                    "outgoing_field": "fulfilled_demand_units_30d",
+                    "outgoing_retirement_reason": "The fulfilled_demand_units_30d feed is degraded or unavailable in the current window.",
+                    "trigger": "A reviewed demand_velocity_ratio_24h feed becomes authoritative while fulfilled_demand_units_30d is degraded."
+                  }
+                }
+              }
+            }
+          },
+          "fields": {
+            "baseline_demand_ratio": {
+              "description": "Baseline demand ratio: the baseline-normalized counterpart signal for this template.",
+              "display_name": "Baseline demand ratio",
+              "effect_strength": 0.55,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 15.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                0.3,
+                3.0
+              ],
+              "unit": "ratio"
+            },
+            "current_demand_units_24h": {
+              "description": "Current demand units: the current-window pressure signal for this template.",
+              "display_name": "Current demand units",
+              "effect_strength": 0.6,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 800.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                10.0,
+                300.0
+              ],
+              "unit": "units"
+            },
+            "demand_velocity_ratio_24h": {
+              "description": "Demand velocity ratio: the rate-of-change pressure signal for this template.",
+              "display_name": "Demand velocity ratio",
+              "effect_strength": 0.7,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 10.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                0.5,
+                4.0
+              ],
+              "unit": "ratio"
+            },
+            "fulfilled_demand_units_30d": {
+              "description": "Fulfilled demand 30d: the trailing history counter-signal for this template.",
+              "display_name": "Fulfilled demand 30d",
+              "effect_strength": 0.5,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 6000.0,
+              "minimum": 0.0,
+              "pressure_direction": -1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                200.0,
+                3000.0
+              ],
+              "unit": "units"
+            },
+            "supplier_disruption_score": {
+              "description": "Supplier disruption score: the external corroboration signal for this template.",
+              "display_name": "Supplier disruption score",
+              "effect_strength": 0.65,
+              "eligible_families": [
+                "additive_aggregation",
+                "conjunctive_gating",
+                "disjunctive_sufficiency"
+              ],
+              "is_reversal": true,
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                0.0,
+                0.5
+              ],
+              "unit": "score"
+            },
+            "warehouse_scan_event_count": {
+              "description": "Warehouse scan events: the telemetry channel uncorrelated with the decision for this template.",
+              "display_name": "Warehouse scan events",
+              "effect_strength": 0.4,
+              "eligible_families": [],
+              "is_reversal": false,
+              "maximum": 400.0,
+              "minimum": 0.0,
+              "pressure_direction": 1,
+              "profile_beta": {
+                "high": [
+                  6.0,
+                  2.0
+                ],
+                "low": [
+                  2.0,
+                  6.0
+                ],
+                "mixed": [
+                  4.0,
+                  4.0
+                ]
+              },
+              "type": "decimal",
+              "typical_range": [
+                20.0,
+                200.0
+              ],
+              "unit": "count"
+            }
+          },
+          "operational_profiles": {
+            "high": {
+              "description": "Cases sit in the stressed operating regime.",
+              "weight": 0.25
+            },
+            "low": {
+              "description": "Cases sit in the calm operating regime.",
+              "weight": 0.4
+            },
+            "mixed": {
+              "description": "Cases mix calm and stressed signals.",
+              "weight": 0.35
+            }
+          },
+          "rule_families": {
+            "additive_aggregation": {
+              "description": "Intervention pressure aggregates weighted evidence across the relevant fields."
+            },
+            "conjunctive_gating": {
+              "description": "Intervention pressure is set by the least satisfied gate among the relevant fields."
+            },
+            "disjunctive_sufficiency": {
+              "description": "Any single sufficient cue among the relevant fields sets intervention pressure."
+            },
+            "lexicographic_priority": {
+              "approved_priority_orders": [
+                {
+                  "fields": [
+                    "current_demand_units_24h",
+                    "demand_velocity_ratio_24h",
+                    "supplier_disruption_score"
+                  ],
+                  "rationale": "Current pressure dominates, then momentum, then external corroboration."
+                },
+                {
+                  "fields": [
+                    "baseline_demand_ratio",
+                    "fulfilled_demand_units_30d",
+                    "supplier_disruption_score"
+                  ],
+                  "rationale": "Baseline-normalized pressure dominates, then history, then corroboration."
+                },
+                {
+                  "fields": [
+                    "current_demand_units_24h",
+                    "fulfilled_demand_units_30d",
+                    "supplier_disruption_score"
+                  ],
+                  "rationale": "Current pressure dominates, then history, then corroboration."
+                }
+              ],
+              "description": "A higher-priority concern controls the decision and cannot be overridden by lower-priority evidence."
+            }
+          },
+          "task_id": "retail_store_replenishment_v4"
+        }
+      }
+    }
+  },
+  "schema_version": "adaexplorebench_domain_templates_v4_0",
+  "template_version": "4.0.0"
+}

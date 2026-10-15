@@ -1,0 +1,13 @@
+Scenario: {{ scenario | tojson }}
+Frozen fields: {{ fields | tojson }}
+Field constraints: {{ component | tojson }}
+
+Audit only the authored feasibility constraints. Treat each constraint as applying only when every field it references has a numeric value; nullness, missingness, availability, and non-applicability are outside this expression language. If a constraint only governs whether evidence exists, reject it for removal rather than proposing a numeric proxy for nullness.
+
+First compare all constraints for exact logical equivalence under the supplied field definitions, including commutative reordering and algebraic restatement. When duplicates exist, accept the representative with the clearest description and shallowest AST and reject the other IDs for removal. If they are equally clear, retain the earlier item. Do not treat partial overlap or one-way implication as duplication.
+
+Then for each constraint, independently evaluate the exact AST branch by branch, then determine whether that expression and its description state the same necessary definitional, accounting, population-containment, or physical-capacity invariant at the same decision freeze. Do not infer correctness from the description when the AST differs. Check that its arithmetic, Boolean logic, comparison direction, and units match the field definitions. Reject it if a valid jointly numeric record can violate it, or if it is only a correlation, causal expectation, common tendency, policy rule, single-field parameter range, availability convention, or dynamic mechanism.
+
+For each conjunction, apply a branch-deletion test. If removing a branch leaves another complete, independently meaningful invariant, reject the bundled constraint with code `bundled_independent_invariants` and identify the independent branches that must become separate constraints. Do not reject a genuinely atomic multi-field expression when all of its terms are jointly necessary to state one invariant.
+
+Return one verdict for every unique constraint id; if the array is empty, return only "__field_constraints__". Do not invent, omit, or repeat an ID.

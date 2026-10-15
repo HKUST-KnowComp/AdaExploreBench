@@ -1,0 +1,8 @@
+Scenario: {{ scenario | tojson }}
+Complete frozen field catalog and decision semantics: {{ field_index | tojson }}
+Numerical calibration batch: {{ component | tojson }}
+Program-computed mapped means using each field's legal minimum and maximum: {{ parameter_diagnostics | tojson }}
+
+Audit only the scenario plausibility of the authored numerical calibration for each assigned field. Return exactly one verdict for every field_id.
+
+Judge whether the legal range, ordinary typical range, low/mixed/high population centers, and concentration/variance are credible for this scenario and the frozen measurement. Every alpha and beta must be strictly greater than 0, and every concentration alpha+beta must be from 4 through 12 inclusive. Treat the relation between the legal range and common low/mixed means as a soft plausibility check: question a range when it appears driven by a merely theoretical extreme that makes realistic common values occupy a tiny fraction of the scale, but accept a strongly skewed or near-boundary mean when the field and scenario genuinely justify it. Reject only when the calibration is semantically inconsistent or implausible to the given scenario and field information, then state the exact corrected numerical condition.

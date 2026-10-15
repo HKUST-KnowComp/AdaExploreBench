@@ -1,0 +1,8 @@
+{
+  "type": "object", "additionalProperties": false,
+  "required": ["accepted", "issues", "summary"],
+  "properties": {
+    "accepted": {"type": "boolean"}, "summary": {"type": "string", "minLength": 1},
+    "issues": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["component_id", "path", "code", "message"], "properties": {"component_id": {"type": "string"}, "path": {"type": "string"}, "code": {"type": "string", "minLength": 1}, "message": {"type": "string", "minLength": 1}}}}
+  }
+}

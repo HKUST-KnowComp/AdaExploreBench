@@ -1,0 +1,12 @@
+Assembled scenario component: {{ component | tojson }}
+Fixed domain description: {{ domain_description }}
+Fixed rule-family meanings: {{ family_meanings | tojson }}
+Existing manifests: {{ existing_templates | tojson }}
+
+{% if blueprint %}
+Authoritative task blueprint: {{ blueprint | tojson }}
+Treat task_id, description, agent_role, and actions as immutable program inputs outside this audit. Audit only operational_profiles and rule_families.
+{% else %}
+No blueprint was supplied. Audit the generated scenario description, agent role, four ordered actions, operational_profiles, and rule_family descriptions for realism and internal coherence.
+{% endif %}
+Low, mixed, and high profiles must be qualitatively coherent populations with increasing intervention tendency and must not be defined by action cost or execution capacity. Each scenario-specific rule-family description must fit the scenario while preserving its fixed family meaning. Return exactly one verdict for the program-owned template_id and report only blocking defects in model-authored properties.

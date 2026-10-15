@@ -1,0 +1,14 @@
+model: gemma-4-12b-it
+concurrency: 64
+conversation_protocol: openai_chat
+base_url: http://127.0.0.1:8020/v1
+api_key: adaexplorebench-local
+batch_size: 64
+temperature: 0.0
+max_tokens: 8192
+output_format: json_object
+effort: high
+extra_body:
+  thinking_token_budget: 4096
+request_timeout_seconds: 1200
+request_retry_limit: 2

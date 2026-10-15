@@ -1,0 +1,20 @@
+{
+  "type": "object", "additionalProperties": false, "required": ["template_id", "replacements", "capacity_findings"],
+  "properties": {
+    "template_id": {"type": "string", "minLength": 1},
+    "replacements": {"type": "array", "items": {
+      "type": "object", "additionalProperties": false,
+      "required": ["group_id", "decision_role", "members", "relation_type", "rationale", "source_contrast", "authority_by_field", "coupling_strength", "effective_scope", "transitions"],
+      "properties": {
+        "group_id": {"type": "string", "minLength": 1}, "decision_role": {"type": "string", "minLength": 1},
+        "members": {"type": "array", "minItems": 2, "maxItems": 2, "uniqueItems": true, "items": {"type": "string"}},
+        "relation_type": {"enum": ["same_source", "same_metric", "different_horizon", "proxy_substitution"]}, "rationale": {"type": "string", "minLength": 1}, "source_contrast": {"type": "string", "minLength": 1},
+        "authority_by_field": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "object", "additionalProperties": false, "required": ["field_id", "authority"], "properties": {"field_id": {"type": "string", "minLength": 1}, "authority": {"type": "string", "minLength": 1}}}},
+        "coupling_strength": {"type": "number", "minimum": 0, "maximum": 0.6},
+        "effective_scope": {"type": "string", "minLength": 1},
+        "transitions": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "object", "additionalProperties": false, "required": ["transition_id", "outgoing_field", "incoming_field", "trigger", "outgoing_retirement_reason", "incoming_authority_reason", "expected_duration", "ending_condition"], "properties": {"transition_id": {"type": "string", "minLength": 1}, "outgoing_field": {"type": "string"}, "incoming_field": {"type": "string"}, "trigger": {"type": "string", "minLength": 1}, "outgoing_retirement_reason": {"type": "string", "minLength": 1}, "incoming_authority_reason": {"type": "string", "minLength": 1}, "expected_duration": {"type": "string", "minLength": 1}, "ending_condition": {"type": "string", "minLength": 1}}}}
+      }
+    }},
+    "capacity_findings": {"type": "array", "items": {"type": "string"}}
+  }
+}

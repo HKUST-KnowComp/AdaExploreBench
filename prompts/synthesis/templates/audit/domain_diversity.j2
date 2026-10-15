@@ -1,0 +1,4 @@
+Decide whether the candidate is meaningfully distinct from every previously accepted template in this domain. Reject only the candidate when it is a scenario-level semantic duplicate, a mere renaming, or has boundary overlap that makes it represent the same workflow and decision. Never re-evaluate or reject a previously accepted template. Field-ID overlap is diagnostic only when it accompanies the same workflow and decision; it is not independently blocking. Reversal-capable fields are also diagnostic only. Do not reject distinct scenarios merely because they share an industry. Set accepted to the verdict for the candidate alone, and attach every issue to the candidate template_id.
+Domain: {{ domain_id }}
+Previously accepted templates: {{ accepted_templates | tojson }}
+Candidate: {{ candidate | tojson }}

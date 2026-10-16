@@ -6,7 +6,7 @@
 
 **Design experiments. Discover hidden dynamics. Adapt when the environment changes.**
 
-[![Dataset](https://img.shields.io/badge/Dataset-256%20Episodes-2c8c7d?style=for-the-badge)](https://huggingface.co/datasets/Roryaccout/AdaExploreBench)
+[![Dataset](https://img.shields.io/badge/Dataset-1280%20Episodes-2c8c7d?style=for-the-badge)](https://huggingface.co/datasets/Roryaccout/AdaExploreBench)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](#-quick-start)
 [![Viewer](https://img.shields.io/badge/Interactive-Research%20Viewer-7463b8?style=for-the-badge)](https://hkust-knowcomp.github.io/AdaExploreBench/)
 [![GitHub](https://img.shields.io/badge/GitHub-Code-24292e?style=for-the-badge&logo=github)](https://github.com/HKUST-KnowComp/AdaExploreBench)
@@ -87,7 +87,7 @@ hf download Roryaccout/AdaExploreBench \
   --local-dir datasets/adaexplorebench
 ```
 
-The available release contains the test split. The training split will be added when ready.
+The release contains 1,024 training episodes and 256 test episodes.
 
 ### Run one episode
 
@@ -128,14 +128,14 @@ The simulator uses scripted model responses against the real runtime and produce
 
 ## 📦 Dataset
 
-AdaExploreBench contains a **256-episode test set**, balanced across four domains and four rule families. A **1,024-episode training set** is in preparation. Dataset files are distributed through [Hugging Face](https://huggingface.co/datasets/Roryaccout/AdaExploreBench).
+AdaExploreBench contains a **256-episode test set**, balanced across four domains and four rule families. A **1,024-episode training set** is also available. Dataset files are distributed through [Hugging Face](https://huggingface.co/datasets/Roryaccout/AdaExploreBench).
 
 | Split | Episodes | Status |
 | :--- | ---: | :--- |
 | `test` | 256 | Available on Hugging Face |
-| `train` | 1,024 planned | In preparation |
+| `train` | 1,024 | Available on Hugging Face |
 
-Each dynamic episode exposes eight numeric fields, with three active factors in each phase, and four available actions.
+Each dynamic episode exposes eight numeric fields, with three active factors in each phase, and four available actions. The training and test splits have disjoint episode IDs and scenario template IDs, with 32 training templates and 16 test templates.
 
 | Rule family | Decision mechanism |
 | :--- | :--- |

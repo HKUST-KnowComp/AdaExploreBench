@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="AdaExploreBench">
+  <defs>
+    <linearGradient id="compass-bg" x1="10" y1="8" x2="86" y2="88" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#0b5d56" />
+      <stop offset="1" stop-color="#4f7d3a" />
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="84" height="84" rx="23" fill="url(#compass-bg)" />
+  <circle cx="48" cy="48" r="25" fill="none" stroke="#eaf7f1" stroke-width="3.4" opacity="0.92" />
+  <path d="M58.5 37.5L52.2 52.2L37.5 58.5L43.8 43.8L58.5 37.5Z" fill="#f4fcf8" stroke="#f4fcf8"
+    stroke-width="1.6" stroke-linejoin="round" />
+  <circle cx="48" cy="48" r="3.4" fill="#8fd6b3" />
+  <path d="M48 14.5V20M48 76V81.5M14.5 48H20M76 48H81.5" stroke="#9bdcb9" stroke-width="3"
+    stroke-linecap="round" />
+</svg>

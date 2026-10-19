@@ -1,0 +1,1232 @@
+{
+  "schema_version": "adaexplorebench_site_data_v1",
+  "source": {
+    "path": "selected-256/dynamic_episodes.jsonl",
+    "sha256": "a47a229e68cd272cad2f5cc2c770c1961edcc0a2fa82c821465ec477f90ae1bb",
+    "episode_count": 256,
+    "selection": "one episode per domain, flip_50 branch"
+  },
+  "utility_note": "The released episode JSON does not store per-case action utilities. Reference utilities shown here are computed from the pre-change hidden rule with the same deterministic mechanism used by the runtime and are rounded to two decimals.",
+  "episodes": [
+    {
+      "episode_id": "conjunctive_finance_f18e17ea_compound_slot01_001",
+      "domain": "finance",
+      "domain_label": "Finance",
+      "rule_family": "conjunctive_gating",
+      "rule_family_label": "Conjunctive gating",
+      "template_id": "finance_intraday_liquidity",
+      "sequence": 1,
+      "agent_role": "At each intraday funding checkpoint, a treasury liquidity controller decides which funding intervention to apply to a queued corporate payment batch over its next settlement window.",
+      "scenario_description": "A corporate treasury desk reviews an authorized payment batch before its settlement cutoff and chooses how strongly to intervene in its funding. The checkpoint exposes available balances, expected incoming and outgoing flows, settlement deadlines, payment priority, committed facilities, and projected liquidity through the current settlement window.",
+      "interaction_protocol": {
+        "action_batch_count": 12,
+        "action_batch_size": 8,
+        "probe_budget_per_batch": 16,
+        "max_probe_cases_per_batch": 32,
+        "max_probe_budget": 32
+      },
+      "branch": "flip_50",
+      "post_branch_available": true,
+      "actions": [
+        {
+          "action_id": "action_0",
+          "display_name": "Release against available balances",
+          "description": "Release the payment batch using liquidity already available in the designated settlement accounts.",
+          "strength_rank": 1,
+          "strength_label": "Least invasive"
+        },
+        {
+          "action_id": "action_1",
+          "display_name": "Reallocate internal liquidity",
+          "description": "Transfer or concentrate internal funds before releasing the batch to strengthen settlement coverage without external borrowing.",
+          "strength_rank": 2,
+          "strength_label": "Intervention level 2"
+        },
+        {
+          "action_id": "action_2",
+          "display_name": "Activate committed funding",
+          "description": "Draw an approved external liquidity facility and use the proceeds to fund release of the payment batch.",
+          "strength_rank": 3,
+          "strength_label": "Intervention level 3"
+        },
+        {
+          "action_id": "action_3",
+          "display_name": "Activate contingency funding",
+          "description": "Draw on contingency funding arrangements beyond committed credit lines to cover the remaining settlement gap for the payment batch.",
+          "strength_rank": 4,
+          "strength_label": "Most invasive"
+        }
+      ],
+      "fields": [
+        {
+          "key": "prior_same_day_shortfall_value",
+          "display_name": "Prior same-day shortfall value",
+          "description": "Aggregate base-currency value of positive designated-balance funding deficits recorded for batches completed earlier on the same operating day.",
+          "type": "decimal",
+          "unit": "base-currency units",
+          "minimum": 0,
+          "maximum": 20000000,
+          "typical_range": [
+            0,
+            4000000
+          ]
+        },
+        {
+          "key": "recent_cash_forecast_error",
+          "display_name": "Recent cash forecast error",
+          "description": "Mean absolute difference between one-hour-ahead aggregate designated-account liquidity-change forecasts and realized changes over the preceding 20 business days; null when no forecast-and-realization pairs exist.",
+          "type": "decimal",
+          "unit": "base-currency units",
+          "minimum": 0,
+          "maximum": 10000000,
+          "typical_range": [
+            100000,
+            1500000
+          ]
+        },
+        {
+          "key": "projected_minimum_settlement_balance",
+          "display_name": "Projected minimum settlement balance",
+          "description": "Forecast lowest aggregate unencumbered balance in designated settlement accounts during the next settlement window under currently scheduled non-batch flows; null when no usable flow forecast exists.",
+          "type": "decimal",
+          "unit": "base-currency units",
+          "minimum": 0,
+          "maximum": 20000000,
+          "typical_range": [
+            1000000,
+            10000000
+          ]
+        },
+        {
+          "key": "value_ahead_in_queue",
+          "display_name": "Value ahead in queue",
+          "description": "Total base-currency value of payment obligations in batches ahead of this batch on the same settlement rail.",
+          "type": "decimal",
+          "unit": "base-currency units",
+          "minimum": 0,
+          "maximum": 50000000,
+          "typical_range": [
+            500000,
+            15000000
+          ]
+        },
+        {
+          "key": "balance_data_age_minutes",
+          "display_name": "Balance data age",
+          "description": "Elapsed minutes from the timestamp of the latest reconciled usable-balance observation to the checkpoint; null when no reconciled observation exists.",
+          "type": "decimal",
+          "unit": "minutes",
+          "minimum": 0,
+          "maximum": 240,
+          "typical_range": [
+            0,
+            30
+          ]
+        },
+        {
+          "key": "worst_account_coverage_deficit",
+          "display_name": "Worst account coverage deficit",
+          "description": "Largest account-level positive deficit, computed as assigned batch funding requirement minus usable balance for each required account; zero when no required account is deficient.",
+          "type": "decimal",
+          "unit": "base-currency units",
+          "minimum": 0,
+          "maximum": 50000000,
+          "typical_range": [
+            0,
+            8000000
+          ]
+        },
+        {
+          "key": "comparable_autonomous_recovery_rate",
+          "display_name": "Comparable autonomous recovery rate",
+          "description": "Fraction with numerator equal to the number of comparable batches, defined as batches matching the current batch on legal entity, settlement currency, payment priority, and scheduled settlement-window duration, observed during the preceding 90-day window that achieved required coverage through routine inflows before their scheduled cutoff without treasury funding, and denominator equal to the number of all such comparable batches observed during the same window; null when no comparable batch was observed.",
+          "type": "decimal",
+          "unit": "fraction (0-1)",
+          "minimum": 0,
+          "maximum": 1,
+          "typical_range": [
+            0.45,
+            0.95
+          ]
+        },
+        {
+          "key": "recent_rejection_rate",
+          "display_name": "Recent settlement rejection rate",
+          "description": "Fraction with numerator equal to payment instructions rejected by the settlement rail and denominator equal to submitted instructions during the preceding 24 hours; null when the denominator is zero.",
+          "type": "decimal",
+          "unit": "fraction (0-1)",
+          "minimum": 0,
+          "maximum": 0.5,
+          "typical_range": [
+            0.002,
+            0.05
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "context_id": "pre_case_007",
+          "stratum": "iid",
+          "raw_values": {
+            "prior_same_day_shortfall_value": 255072.696922,
+            "recent_cash_forecast_error": 0.148911,
+            "projected_minimum_settlement_balance": 8120723.881105,
+            "value_ahead_in_queue": 5447717.747951,
+            "balance_data_age_minutes": 0.041608,
+            "worst_account_coverage_deficit": 271989.431308,
+            "comparable_autonomous_recovery_rate": 0.922574,
+            "recent_rejection_rate": 0.049735
+          },
+          "reference_utilities": {
+            "action_0": 0.43,
+            "action_1": 0.23,
+            "action_2": -0.33,
+            "action_3": -0.33
+          },
+          "reference_optimal_action": "action_0"
+        },
+        {
+          "context_id": "pre_case_030",
+          "stratum": "iid",
+          "raw_values": {
+            "prior_same_day_shortfall_value": 2555806.069558,
+            "recent_cash_forecast_error": 1322763.592489,
+            "projected_minimum_settlement_balance": 8246759.883766,
+            "value_ahead_in_queue": 243387.33917,
+            "balance_data_age_minutes": 1.939288,
+            "worst_account_coverage_deficit": 1279239.659686,
+            "comparable_autonomous_recovery_rate": 0.385797,
+            "recent_rejection_rate": 0.009222
+          },
+          "reference_utilities": {
+            "action_0": 0.03,
+            "action_1": 0.6,
+            "action_2": -0.29,
+            "action_3": -0.33
+          },
+          "reference_optimal_action": "action_1"
+        },
+        {
+          "context_id": "pre_case_012",
+          "stratum": "iid",
+          "raw_values": {
+            "prior_same_day_shortfall_value": 9700583.691971,
+            "recent_cash_forecast_error": 6156517.071038,
+            "projected_minimum_settlement_balance": 2323036.275873,
+            "value_ahead_in_queue": 37997753.931582,
+            "balance_data_age_minutes": 150.050299,
+            "worst_account_coverage_deficit": 8611515.951161,
+            "comparable_autonomous_recovery_rate": 0.159711,
+            "recent_rejection_rate": 0.357988
+          },
+          "reference_utilities": {
+            "action_0": -0.33,
+            "action_1": -0.33,
+            "action_2": -0.31,
+            "action_3": 0.98
+          },
+          "reference_optimal_action": "action_3"
+        }
+      ],
+      "transition": {
+        "type": "compound",
+        "after_action_batch": 6,
+        "pre_rule": {
+          "family": "conjunctive_gating",
+          "family_label": "Conjunctive gating",
+          "relevant_fields": [
+            {
+              "key": "value_ahead_in_queue",
+              "display_name": "Value ahead in queue",
+              "direction": 1,
+              "direction_label": "positive"
+            },
+            {
+              "key": "projected_minimum_settlement_balance",
+              "display_name": "Projected minimum settlement balance",
+              "direction": -1,
+              "direction_label": "negative"
+            },
+            {
+              "key": "balance_data_age_minutes",
+              "display_name": "Balance data age",
+              "direction": 1,
+              "direction_label": "positive"
+            }
+          ],
+          "field_directions": {
+            "value_ahead_in_queue": 1,
+            "projected_minimum_settlement_balance": -1,
+            "balance_data_age_minutes": 1
+          }
+        },
+        "post_rule": {
+          "family": "conjunctive_gating",
+          "family_label": "Conjunctive gating",
+          "relevant_fields": [
+            {
+              "key": "value_ahead_in_queue",
+              "display_name": "Value ahead in queue",
+              "direction": 1,
+              "direction_label": "positive"
+            },
+            {
+              "key": "projected_minimum_settlement_balance",
+              "display_name": "Projected minimum settlement balance",
+              "direction": 1,
+              "direction_label": "positive"
+            },
+            {
+              "key": "recent_cash_forecast_error",
+              "display_name": "Recent cash forecast error",
+              "direction": 1,
+              "direction_label": "positive"
+            }
+          ],
+          "field_directions": {
+            "value_ahead_in_queue": 1,
+            "projected_minimum_settlement_balance": 1,
+            "recent_cash_forecast_error": 1
+          }
+        },
+        "operations": [
+          {
+            "type": "field_replacement",
+            "outgoing_field": "balance_data_age_minutes",
+            "outgoing_display_name": "Balance data age",
+            "incoming_field": "recent_cash_forecast_error",
+            "incoming_display_name": "Recent cash forecast error"
+          },
+          {
+            "type": "direction_reversal",
+            "target_field": "projected_minimum_settlement_balance",
+            "target_display_name": "Projected minimum settlement balance",
+            "pre_direction": -1,
+            "post_direction": 1,
+            "pre_direction_label": "negative",
+            "post_direction_label": "positive"
+          }
+        ],
+        "semantic_change": {
+          "trigger_event": "A fresh balance reconciliation and cash-flow forecast refresh arrives while the settlement queue is unchanged.",
+          "change_reason": "A reconciliation and forecast refresh can make balance data newer, expose forecast error, and reverse the projected minimum balance while queue demand remains unchanged."
+        }
+      }
+    },
+    {
+      "episode_id": "additive_healthcare_779f3f3b_compound_slot01_037",
+      "domain": "healthcare",
+      "domain_label": "Healthcare",
+      "rule_family": "additive_aggregation",
+      "rule_family_label": "Additive aggregation",
+      "template_id": "healthcare_emergency_arrival_triage",
+      "sequence": 37,
+      "agent_role": "At each initial emergency-department assessment, a triage nurse decides which clinical routing intervention to apply to a newly registered patient over the immediate evaluation window.",
+      "scenario_description": "A newly registered emergency-department arrival receives an initial triage assessment that determines the urgency of the first care pathway. The nurse can use presenting symptoms, vital signs, pain and mental status, mechanism or onset, relevant history, vulnerability indicators, and observed change during the immediate assessment window.",
+      "interaction_protocol": {
+        "action_batch_count": 12,
+        "action_batch_size": 8,
+        "probe_budget_per_batch": 16,
+        "max_probe_cases_per_batch": 32,
+        "max_probe_budget": 32
+      },
+      "branch": "flip_50",
+      "post_branch_available": true,
+      "actions": [
+        {
+          "action_id": "action_0",
+          "display_name": "Route to standard evaluation",
+          "description": "Place the patient in the standard emergency evaluation pathway with routine reassessment while awaiting a clinician.",
+          "strength_rank": 1,
+          "strength_label": "Least invasive"
+        },
+        {
+          "action_id": "action_1",
+          "display_name": "Route to expedited evaluation",
+          "description": "Move the patient ahead of the standard queue for earlier clinician assessment without dedicated monitoring.",
+          "strength_rank": 2,
+          "strength_label": "Intervention level 2"
+        },
+        {
+          "action_id": "action_2",
+          "display_name": "Route to priority monitored evaluation",
+          "description": "Place the patient in an expedited monitored pathway with dedicated observation and scheduled reassessment in addition to earlier clinician assessment.",
+          "strength_rank": 3,
+          "strength_label": "Intervention level 3"
+        },
+        {
+          "action_id": "action_3",
+          "display_name": "Activate immediate critical response",
+          "description": "Route the patient directly to the highest-acuity treatment area and activate an immediate resuscitation-level clinical response.",
+          "strength_rank": 4,
+          "strength_label": "Most invasive"
+        }
+      ],
+      "fields": [
+        {
+          "key": "anticoagulant_indicator",
+          "display_name": "Therapeutic anticoagulant indicator",
+          "description": "Whether the patient has current therapeutic anticoagulant exposure, coded 0 for no, 1 for yes, and null if medication status is unknown.",
+          "type": "integer",
+          "unit": "binary indicator (0/1)",
+          "minimum": 0,
+          "maximum": 1,
+          "typical_range": [
+            0,
+            1
+          ]
+        },
+        {
+          "key": "gcs_total",
+          "display_name": "Glasgow Coma Scale total",
+          "description": "Current Glasgow Coma Scale total across eye, verbal, and motor components; null if the score cannot be assessed.",
+          "type": "integer",
+          "unit": "score points (3–15)",
+          "minimum": 3,
+          "maximum": 15,
+          "typical_range": [
+            10,
+            15
+          ]
+        },
+        {
+          "key": "baseline_sbp_decrement",
+          "display_name": "Baseline systolic-pressure decrement",
+          "description": "Usual resting systolic blood pressure minus current systolic blood pressure, allowing negative values when current pressure exceeds baseline; null if a reliable baseline or current value is unavailable.",
+          "type": "decimal",
+          "unit": "mmHg",
+          "minimum": -50,
+          "maximum": 100,
+          "typical_range": [
+            -10,
+            25
+          ]
+        },
+        {
+          "key": "smoke_inhalation_duration",
+          "display_name": "Smoke-inhalation duration",
+          "description": "Elapsed duration of smoke exposure during the current event; null if there was no smoke exposure or its duration is unknown.",
+          "type": "decimal",
+          "unit": "minutes",
+          "minimum": 0,
+          "maximum": 180,
+          "typical_range": [
+            0,
+            45
+          ]
+        },
+        {
+          "key": "self_harm_attempt_indicator",
+          "display_name": "Recent self-harm attempt indicator",
+          "description": "Whether a documented or credibly reported self-harm act or suicide attempt occurred within the 7 x 24-hour period before triage and directly caused or prompted the current emergency-department presentation; coded 0 for no qualifying event, 1 for yes, and null if event occurrence, timing, or linkage to the current presentation is unknown.",
+          "type": "integer",
+          "unit": "binary indicator (0/1)",
+          "minimum": 0,
+          "maximum": 1,
+          "typical_range": [
+            0,
+            1
+          ]
+        },
+        {
+          "key": "probability_autonomous_recovery_60m",
+          "display_name": "Probability of autonomous recovery within 60 minutes",
+          "description": "Estimated probability that, without clinician treatment, within 60 minutes after triage this patient's presenting symptoms and all required measures return to the patient's last documented usual state before onset of the current illness or injury: heart rate, respiratory rate, systolic blood pressure, and room-air oxygen saturation each within 10% of that state's value; Glasgow Coma Scale equal to that state's score; pain score at or below 3/10 and no higher than that state's score; and every presenting symptom absent or at its documented baseline severity, with no new symptom. All criteria must hold simultaneously for at least 10 consecutive minutes; null if the baseline or any required measure is unavailable.",
+          "type": "decimal",
+          "unit": "probability (0–1)",
+          "minimum": 0,
+          "maximum": 1,
+          "typical_range": [
+            0.3,
+            0.9
+          ]
+        },
+        {
+          "key": "stable_observation_duration",
+          "display_name": "Stable observation duration",
+          "description": "Continuous minutes immediately before the decision with no new clinically meaningful deterioration event; 0 means no stable interval has elapsed and null means the observation record is unavailable.",
+          "type": "decimal",
+          "unit": "minutes",
+          "minimum": 0,
+          "maximum": 360,
+          "typical_range": [
+            5,
+            90
+          ]
+        },
+        {
+          "key": "immunosuppression_indicator",
+          "display_name": "Immunosuppression indicator",
+          "description": "Whether active disease or therapy causes clinically relevant immunosuppression, coded 0 for no, 1 for yes, and null if status is unknown.",
+          "type": "integer",
+          "unit": "binary indicator (0/1)",
+          "minimum": 0,
+          "maximum": 1,
+          "typical_range": [
+            0,
+            1
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "context_id": "pre_case_022",
+          "stratum": "iid",
+          "raw_values": {
+            "anticoagulant_indicator": 0,
+            "gcs_total": 14,
+            "baseline_sbp_decrement": -4.421183,
+            "smoke_inhalation_duration": 61.027654,
+            "self_harm_attempt_indicator": 0,
+            "probability_autonomous_recovery_60m": 0.67991,
+            "stable_observation_duration": 67.050218,
+            "immunosuppression_indicator": 0
+          },
+          "reference_utilities": {
+            "action_0": -0.28,
+            "action_1": 0.61,
+            "action_2": 0.0,
+            "action_3": -0.33
+          },
+          "reference_optimal_action": "action_1"
+        },
+        {
+          "context_id": "pre_case_002",
+          "stratum": "iid",
+          "raw_values": {
+            "anticoagulant_indicator": 0,
+            "gcs_total": 10,
+            "baseline_sbp_decrement": 5.176515,
+            "smoke_inhalation_duration": 6.696781,
+            "self_harm_attempt_indicator": 0,
+            "probability_autonomous_recovery_60m": 0.383353,
+            "stable_observation_duration": 23.491721,
+            "immunosuppression_indicator": 0
+          },
+          "reference_utilities": {
+            "action_0": -0.33,
+            "action_1": -0.26,
+            "action_2": 0.68,
+            "action_3": -0.09
+          },
+          "reference_optimal_action": "action_2"
+        },
+        {
+          "context_id": "pre_case_024",
+          "stratum": "iid",
+          "raw_values": {
+            "anticoagulant_indicator": 0,
+            "gcs_total": 10,
+            "baseline_sbp_decrement": 76.507015,
+            "smoke_inhalation_duration": 63.167033,
+            "self_harm_attempt_indicator": 1,
+            "probability_autonomous_recovery_60m": 0.158354,
+            "stable_observation_duration": 0.12477,
+            "immunosuppression_indicator": 0
+          },
+          "reference_utilities": {
+            "action_0": -0.33,
+            "action_1": -0.33,
+            "action_2": -0.3,
+            "action_3": 0.97
+          },
+          "reference_optimal_action": "action_3"
+        }
+      ],
+      "transition": {
+        "type": "compound",
+        "after_action_batch": 5,
+        "pre_rule": {
+          "family": "additive_aggregation",
+          "family_label": "Additive aggregation",
+          "relevant_fields": [
+            {
+              "key": "smoke_inhalation_duration",
+              "display_name": "Smoke-inhalation duration",
+              "direction": 1,
+              "direction_label": "positive"
+            },
+            {
+              "key": "stable_observation_duration",
+              "display_name": "Stable observation duration",
+              "direction": -1,
+              "direction_label": "negative"
+            },
+            {
+              "key": "gcs_total",
+              "display_name": "Glasgow Coma Scale total",
+              "direction": -1,
+              "direction_label": "negative"
+            }
+          ],
+          "field_directions": {
+            "smoke_inhalation_duration": 1,
+            "stable_observation_duration": -1,
+            "gcs_total": -1
+          }
+        },
+        "post_rule": {
+          "family": "additive_aggregation",
+          "family_label": "Additive aggregation",
+          "relevant_fields": [
+            {
+              "key": "smoke_inhalation_duration",
+              "display_name": "Smoke-inhalation duration",
+              "direction": 1,
+              "direction_label": "positive"
+            },
+            {
+              "key": "stable_observation_duration",
+              "display_name": "Stable observation duration",
+              "direction": 1,
+              "direction_label": "positive"
+            },
+            {
+              "key": "probability_autonomous_recovery_60m",
+              "display_name": "Probability of autonomous recovery within 60 minutes",
+              "direction": -1,
+              "direction_label": "negative"
+            }
+          ],
+          "field_directions": {
+            "smoke_inhalation_duration": 1,
+            "stable_observation_duration": 1,
+            "probability_autonomous_recovery_60m": -1
+          }
+        },
+        "operations": [
+          {
+            "type": "field_replacement",
+            "outgoing_field": "gcs_total",
+            "outgoing_display_name": "Glasgow Coma Scale total",
+            "incoming_field": "probability_autonomous_recovery_60m",
+            "incoming_display_name": "Probability of autonomous recovery within 60 minutes"
+          },
+          {
+            "type": "direction_reversal",
+            "target_field": "stable_observation_duration",
+            "target_display_name": "Stable observation duration",
+            "pre_direction": -1,
+            "post_direction": 1,
+            "pre_direction_label": "negative",
+            "post_direction_label": "positive"
+          }
+        ],
+        "semantic_change": {
+          "trigger_event": "New neurologic or clinical deterioration during observation of the smoke-exposed patient.",
+          "change_reason": "A smoke-exposed patient develops new deterioration during observation, resetting the stable interval and making predicted autonomous recovery more useful than the current GCS while exposure duration remains unchanged."
+        }
+      }
+    },
+    {
+      "episode_id": "disjunctive_cybersecurity_e4d6ced6_compound_slot01_319",
+      "domain": "cybersecurity",
+      "domain_label": "Cybersecurity",
+      "rule_family": "disjunctive_sufficiency",
+      "rule_family_label": "Disjunctive sufficiency",
+      "template_id": "cybersecurity_data_transfer_review",
+      "sequence": 319,
+      "agent_role": "At each outbound-transfer alert review, a data protection analyst decides which data-movement intervention to apply to the flagged transfer during the current release-control window.",
+      "scenario_description": "A flagged outbound data transfer is reviewed before release to distinguish authorized business movement from accidental or malicious disclosure. The analyst can use data classification and volume, destination and recipient trust, user and device context, approved business purpose, transfer channel, access history, anomaly signals, and applicable handling restrictions.",
+      "interaction_protocol": {
+        "action_batch_count": 12,
+        "action_batch_size": 8,
+        "probe_budget_per_batch": 16,
+        "max_probe_cases_per_batch": 32,
+        "max_probe_budget": 32
+      },
+      "branch": "flip_50",
+      "post_branch_available": true,
+      "actions": [
+        {
+          "action_id": "action_0",
+          "display_name": "Release transfer",
+          "description": "Allow the outbound transfer to proceed through the requested channel under normal monitoring.",
+          "strength_rank": 1,
+          "strength_label": "Least invasive"
+        },
+        {
+          "action_id": "action_1",
+          "display_name": "Hold for authorization verification",
+          "description": "Pause the transfer until its authorization and business purpose are verified.",
+          "strength_rank": 2,
+          "strength_label": "Intervention level 2"
+        },
+        {
+          "action_id": "action_2",
+          "display_name": "Hold for sanitization",
+          "description": "Pause the transfer until protected content is removed or transformed as required, then release it.",
+          "strength_rank": 3,
+          "strength_label": "Intervention level 3"
+        },
+        {
+          "action_id": "action_3",
+          "display_name": "Block and escalate transfer",
+          "description": "Block the transfer and escalate the event for formal data-loss or insider-risk investigation.",
+          "strength_rank": 4,
+          "strength_label": "Most invasive"
+        }
+      ],
+      "fields": [
+        {
+          "key": "user_privilege_level",
+          "display_name": "Sender privilege level",
+          "description": "Ordinal privilege level of the sending account, where 0 is standard access and larger values indicate broader access or authority.",
+          "type": "integer",
+          "unit": "privilege-level points",
+          "minimum": 0,
+          "maximum": 5,
+          "typical_range": [
+            0,
+            3
+          ]
+        },
+        {
+          "key": "destination_observation_age_days",
+          "display_name": "Destination observation age",
+          "description": "Days since the receiving domain, account, or service was first observed in organizational telemetry; null when it has not been observed previously.",
+          "type": "decimal",
+          "unit": "days",
+          "minimum": 0,
+          "maximum": 3650,
+          "typical_range": [
+            30,
+            1800
+          ]
+        },
+        {
+          "key": "unauthorized_transfer_probability",
+          "display_name": "Unauthorized transfer probability",
+          "description": "Probability at review time that the transfer lacks valid authorization or exceeds its approved scope.",
+          "type": "decimal",
+          "unit": "probability (0–1)",
+          "minimum": 0,
+          "maximum": 1,
+          "typical_range": [
+            0.01,
+            0.3
+          ]
+        },
+        {
+          "key": "business_purpose_match_score",
+          "display_name": "Business purpose match",
+          "description": "Score for the semantic match between the stated transfer purpose and the approved business purpose, where higher values indicate a closer match; null when no approved purpose is recorded.",
+          "type": "decimal",
+          "unit": "match score (0–1)",
+          "minimum": 0,
+          "maximum": 1,
+          "typical_range": [
+            0.45,
+            0.95
+          ]
+        },
+        {
+          "key": "transport_encryption_strength_bits",
+          "display_name": "Transport encryption strength",
+          "description": "Effective cryptographic confidentiality strength protecting the transfer in transit; zero means no effective authenticated encryption is applied.",
+          "type": "decimal",
+          "unit": "effective security bits",
+          "minimum": 0,
+          "maximum": 256,
+          "typical_range": [
+            96,
+            256
+          ]
+        },
+        {
+          "key": "channel_risk_score",
+          "display_name": "Transfer channel risk",
+          "description": "Technical and behavioral risk score for the requested transfer channel, where 0 is lowest observed disclosure risk and 1 is highest.",
+          "type": "decimal",
+          "unit": "risk score (0–1)",
+          "minimum": 0,
+          "maximum": 1,
+          "typical_range": [
+            0.05,
+            0.45
+          ]
+        },
+        {
+          "key": "device_malware_alert_count",
+          "display_name": "Device malware alerts",
+          "description": "Malware or endpoint-compromise detections associated with the sending device during the preceding 30 days.",
+          "type": "integer",
+          "unit": "alerts (prior 30 days)",
+          "minimum": 0,
+          "maximum": 40,
+          "typical_range": [
+            0,
+            4
+          ]
+        },
+        {
+          "key": "affected_data_subject_count",
+          "display_name": "Affected data subjects",
+          "description": "Distinct data subjects represented in the payload; null when subject enumeration is unavailable.",
+          "type": "integer",
+          "unit": "data subjects",
+          "minimum": 0,
+          "maximum": 5000000,
+          "typical_range": [
+            0,
+            250000
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "context_id": "pre_case_037",
+          "stratum": "iid",
+          "raw_values": {
+            "user_privilege_level": 1,
+            "destination_observation_age_days": 146.481172,
+            "unauthorized_transfer_probability": 0.530222,
+            "business_purpose_match_score": 0.57913,
+            "transport_encryption_strength_bits": 137.553934,
+            "channel_risk_score": 0.142855,
+            "device_malware_alert_count": 1,
+            "affected_data_subject_count": 155767
+          },
+          "reference_utilities": {
+            "action_0": -0.33,
+            "action_1": 0.13,
+            "action_2": 0.5,
+            "action_3": -0.31
+          },
+          "reference_optimal_action": "action_2"
+        },
+        {
+          "context_id": "pre_case_004",
+          "stratum": "iid",
+          "raw_values": {
+            "user_privilege_level": 3,
+            "destination_observation_age_days": 418.865961,
+            "unauthorized_transfer_probability": 0.05267,
+            "business_purpose_match_score": 0.808091,
+            "transport_encryption_strength_bits": 171.668461,
+            "channel_risk_score": 0.152822,
+            "device_malware_alert_count": 0,
+            "affected_data_subject_count": 694
+          },
+          "reference_utilities": {
+            "action_0": -0.02,
+            "action_1": 0.63,
+            "action_2": -0.28,
+            "action_3": -0.33
+          },
+          "reference_optimal_action": "action_1"
+        },
+        {
+          "context_id": "pre_case_028",
+          "stratum": "iid",
+          "raw_values": {
+            "user_privilege_level": 1,
+            "destination_observation_age_days": 1787.987768,
+            "unauthorized_transfer_probability": 0.001939,
+            "business_purpose_match_score": 0.80066,
+            "transport_encryption_strength_bits": 191.200537,
+            "channel_risk_score": 0.06043,
+            "device_malware_alert_count": 0,
+            "affected_data_subject_count": 0
+          },
+          "reference_utilities": {
+            "action_0": 0.68,
+            "action_1": -0.01,
+            "action_2": -0.33,
+            "action_3": -0.33
+          },
+          "reference_optimal_action": "action_0"
+        }
+      ],
+      "transition": {
+        "type": "compound",
+        "after_action_batch": 5,
+        "pre_rule": {
+          "family": "disjunctive_sufficiency",
+          "family_label": "Disjunctive sufficiency",
+          "relevant_fields": [
+            {
+              "key": "business_purpose_match_score",
+              "display_name": "Business purpose match",
+              "direction": -1,
+              "direction_label": "negative"
+            },
+            {
+              "key": "transport_encryption_strength_bits",
+              "display_name": "Transport encryption strength",
+              "direction": -1,
+              "direction_label": "negative"
+            },
+            {
+              "key": "unauthorized_transfer_probability",
+              "display_name": "Unauthorized transfer probability",
+              "direction": 1,
+              "direction_label": "positive"
+            }
+          ],
+          "field_directions": {
+            "business_purpose_match_score": -1,
+            "transport_encryption_strength_bits": -1,
+            "unauthorized_transfer_probability": 1
+          }
+        },
+        "post_rule": {
+          "family": "disjunctive_sufficiency",
+          "family_label": "Disjunctive sufficiency",
+          "relevant_fields": [
+            {
+              "key": "business_purpose_match_score",
+              "display_name": "Business purpose match",
+              "direction": -1,
+              "direction_label": "negative"
+            },
+            {
+              "key": "transport_encryption_strength_bits",
+              "display_name": "Transport encryption strength",
+              "direction": 1,
+              "direction_label": "positive"
+            },
+            {
+              "key": "device_malware_alert_count",
+              "display_name": "Device malware alerts",
+              "direction": 1,
+              "direction_label": "positive"
+            }
+          ],
+          "field_directions": {
+            "business_purpose_match_score": -1,
+            "transport_encryption_strength_bits": 1,
+            "device_malware_alert_count": 1
+          }
+        },
+        "operations": [
+          {
+            "type": "field_replacement",
+            "outgoing_field": "unauthorized_transfer_probability",
+            "outgoing_display_name": "Unauthorized transfer probability",
+            "incoming_field": "device_malware_alert_count",
+            "incoming_display_name": "Device malware alerts"
+          },
+          {
+            "type": "direction_reversal",
+            "target_field": "transport_encryption_strength_bits",
+            "target_display_name": "Transport encryption strength",
+            "pre_direction": -1,
+            "post_direction": 1,
+            "pre_direction_label": "negative",
+            "post_direction_label": "positive"
+          }
+        ],
+        "semantic_change": {
+          "trigger_event": "A malware detection on the sending device causes incident-response controls to reassess and resecure the outbound transfer.",
+          "change_reason": "A new sender-endpoint compromise alert triggers a unified transfer reassessment: observed malware evidence supplants the prior authorization-risk signal and the transport-security posture changes while business-purpose alignment remains stable."
+        }
+      }
+    },
+    {
+      "episode_id": "lexicographic_manufacturing_8ec8802a_compound_slot04_256",
+      "domain": "manufacturing",
+      "domain_label": "Manufacturing",
+      "rule_family": "lexicographic_priority",
+      "rule_family_label": "Lexicographic priority",
+      "template_id": "manufacturing_machine_maintenance",
+      "sequence": 256,
+      "agent_role": "At the start of each planned production block, a maintenance reliability coordinator decides which service intervention to apply to an in-service machine over that production block.",
+      "scenario_description": "An in-service production machine is reviewed at the start of a planned production block to decide whether it can safely and reliably operate through that block. Evidence includes condition-monitoring signals, active alarms, degradation trends, recent failures and service, operating load, product and safety requirements, and the forecast risk of failure before the next maintenance opportunity.",
+      "interaction_protocol": {
+        "action_batch_count": 12,
+        "action_batch_size": 8,
+        "probe_budget_per_batch": 16,
+        "max_probe_cases_per_batch": 32,
+        "max_probe_budget": 32
+      },
+      "branch": "flip_50",
+      "post_branch_available": true,
+      "actions": [
+        {
+          "action_id": "action_0",
+          "display_name": "Continue normal operation",
+          "description": "Run the machine through the planned production block under standard operating and monitoring conditions.",
+          "strength_rank": 1,
+          "strength_label": "Least invasive"
+        },
+        {
+          "action_id": "action_1",
+          "display_name": "Operate with enhanced monitoring",
+          "description": "Run the machine through the production block with increased condition-monitoring and inspection frequency.",
+          "strength_rank": 2,
+          "strength_label": "Intervention level 2"
+        },
+        {
+          "action_id": "action_2",
+          "display_name": "Derate and inspect",
+          "description": "Reduce the machine's operating envelope and perform an expedited inspection during the production block.",
+          "strength_rank": 3,
+          "strength_label": "Intervention level 3"
+        },
+        {
+          "action_id": "action_3",
+          "display_name": "Stop for corrective maintenance",
+          "description": "Remove the machine from service and complete corrective maintenance before returning it to production.",
+          "strength_rank": 4,
+          "strength_label": "Most invasive"
+        }
+      ],
+      "fields": [
+        {
+          "key": "supply_voltage_deviation",
+          "display_name": "Supply voltage deviation",
+          "description": "100 * abs(measured RMS supply voltage - nominal RMS supply voltage) / nominal RMS supply voltage at the decision snapshot; null when voltage is unavailable.",
+          "type": "decimal",
+          "unit": "%",
+          "minimum": 0,
+          "maximum": 20,
+          "typical_range": [
+            0.2,
+            5
+          ]
+        },
+        {
+          "key": "motor_winding_temperature",
+          "display_name": "Motor winding temperature",
+          "description": "Temperature of the hottest monitored motor winding at the decision snapshot; null when no winding temperature sensor exists.",
+          "type": "decimal",
+          "unit": "degC",
+          "minimum": 20,
+          "maximum": 160,
+          "typical_range": [
+            45,
+            100
+          ]
+        },
+        {
+          "key": "continuous_out_of_limit_duration",
+          "display_name": "Continuous out-of-limit duration",
+          "description": "Elapsed time since the start of the current uninterrupted excursion of the primary condition indicator outside its approved limits; null when no such excursion is active.",
+          "type": "decimal",
+          "unit": "h",
+          "minimum": 0,
+          "maximum": 168,
+          "typical_range": [
+            0,
+            1.5
+          ]
+        },
+        {
+          "key": "lubricant_particle_concentration",
+          "display_name": "Lubricant particle concentration",
+          "description": "Mean concentration of wear particles in the latest lubricant sample; null when no valid lubricant sample is available.",
+          "type": "decimal",
+          "unit": "particles/mL",
+          "minimum": 0,
+          "maximum": 30000,
+          "typical_range": [
+            500,
+            12000
+          ]
+        },
+        {
+          "key": "bearing_temperature_trend",
+          "display_name": "Bearing-temperature trend",
+          "description": "Change in daily mean critical-bearing temperature from the beginning to the end of the preceding 7-day window divided by 7 days; null when sufficient bearing-temperature history is unavailable.",
+          "type": "decimal",
+          "unit": "degC/day",
+          "minimum": -4,
+          "maximum": 8,
+          "typical_range": [
+            -0.8,
+            1.2
+          ]
+        },
+        {
+          "key": "bearing_temperature",
+          "display_name": "Bearing temperature",
+          "description": "Temperature of the most critical monitored bearing at the decision snapshot; null when no bearing temperature sensor exists.",
+          "type": "decimal",
+          "unit": "degC",
+          "minimum": 20,
+          "maximum": 110,
+          "typical_range": [
+            35,
+            75
+          ]
+        },
+        {
+          "key": "coolant_flow_rate",
+          "display_name": "Coolant flow rate",
+          "description": "Measured coolant flow through the machine cooling circuit at the decision snapshot; null when no monitored coolant circuit exists.",
+          "type": "decimal",
+          "unit": "L/min",
+          "minimum": 0,
+          "maximum": 120,
+          "typical_range": [
+            45,
+            95
+          ]
+        },
+        {
+          "key": "inspection_age",
+          "display_name": "Inspection age",
+          "description": "Elapsed time since the most recent completed machine inspection; null when no inspection history exists.",
+          "type": "decimal",
+          "unit": "days",
+          "minimum": 0,
+          "maximum": 730,
+          "typical_range": [
+            0,
+            120
+          ]
+        }
+      ],
+      "cases": [
+        {
+          "context_id": "pre_case_035",
+          "stratum": "iid",
+          "raw_values": {
+            "supply_voltage_deviation": 2.851098,
+            "motor_winding_temperature": 68.421337,
+            "continuous_out_of_limit_duration": 0.0,
+            "lubricant_particle_concentration": 2262.478305,
+            "bearing_temperature_trend": -1.539854,
+            "bearing_temperature": 63.77182,
+            "coolant_flow_rate": 40.379412,
+            "inspection_age": 93.674658
+          },
+          "reference_utilities": {
+            "action_0": -0.33,
+            "action_1": -0.31,
+            "action_2": 0.43,
+            "action_3": 0.21
+          },
+          "reference_optimal_action": "action_2"
+        },
+        {
+          "context_id": "pre_case_020",
+          "stratum": "iid",
+          "raw_values": {
+            "supply_voltage_deviation": 1.567611,
+            "motor_winding_temperature": 81.028828,
+            "continuous_out_of_limit_duration": 0.0,
+            "lubricant_particle_concentration": 7472.680095,
+            "bearing_temperature_trend": 1.689733,
+            "bearing_temperature": 55.537831,
+            "coolant_flow_rate": 85.735294,
+            "inspection_age": 121.164324
+          },
+          "reference_utilities": {
+            "action_0": -0.26,
+            "action_1": 0.67,
+            "action_2": -0.08,
+            "action_3": -0.33
+          },
+          "reference_optimal_action": "action_1"
+        },
+        {
+          "context_id": "pre_case_025",
+          "stratum": "iid",
+          "raw_values": {
+            "supply_voltage_deviation": 1.079585,
+            "motor_winding_temperature": 30.747964,
+            "continuous_out_of_limit_duration": 0.0,
+            "lubricant_particle_concentration": 3651.681999,
+            "bearing_temperature_trend": 0.32333,
+            "bearing_temperature": 42.67396,
+            "coolant_flow_rate": 102.274116,
+            "inspection_age": 60.739076
+          },
+          "reference_utilities": {
+            "action_0": 0.89,
+            "action_1": -0.23,
+            "action_2": -0.33,
+            "action_3": -0.33
+          },
+          "reference_optimal_action": "action_0"
+        }
+      ],
+      "transition": {
+        "type": "compound",
+        "after_action_batch": 5,
+        "pre_rule": {
+          "family": "lexicographic_priority",
+          "family_label": "Lexicographic priority",
+          "relevant_fields": [
+            {
+              "key": "motor_winding_temperature",
+              "display_name": "Motor winding temperature",
+              "direction": 1,
+              "direction_label": "positive"
+            },
+            {
+              "key": "coolant_flow_rate",
+              "display_name": "Coolant flow rate",
+              "direction": -1,
+              "direction_label": "negative"
+            },
+            {
+              "key": "bearing_temperature",
+              "display_name": "Bearing temperature",
+              "direction": 1,
+              "direction_label": "positive"
+            }
+          ],
+          "field_directions": {
+            "motor_winding_temperature": 1,
+            "coolant_flow_rate": -1,
+            "bearing_temperature": 1
+          }
+        },
+        "post_rule": {
+          "family": "lexicographic_priority",
+          "family_label": "Lexicographic priority",
+          "relevant_fields": [
+            {
+              "key": "motor_winding_temperature",
+              "display_name": "Motor winding temperature",
+              "direction": 1,
+              "direction_label": "positive"
+            },
+            {
+              "key": "coolant_flow_rate",
+              "display_name": "Coolant flow rate",
+              "direction": 1,
+              "direction_label": "positive"
+            },
+            {
+              "key": "bearing_temperature_trend",
+              "display_name": "Bearing-temperature trend",
+              "direction": 1,
+              "direction_label": "positive"
+            }
+          ],
+          "field_directions": {
+            "motor_winding_temperature": 1,
+            "coolant_flow_rate": 1,
+            "bearing_temperature_trend": 1
+          }
+        },
+        "operations": [
+          {
+            "type": "field_replacement",
+            "outgoing_field": "bearing_temperature",
+            "outgoing_display_name": "Bearing temperature",
+            "incoming_field": "bearing_temperature_trend",
+            "incoming_display_name": "Bearing-temperature trend"
+          },
+          {
+            "type": "direction_reversal",
+            "target_field": "coolant_flow_rate",
+            "target_display_name": "Coolant flow rate",
+            "pre_direction": -1,
+            "post_direction": 1,
+            "pre_direction_label": "negative",
+            "post_direction_label": "positive"
+          }
+        ],
+        "semantic_change": {
+          "trigger_event": "A cooling-system flow disturbance develops during preparation for the production block.",
+          "change_reason": "A cooling-flow disturbance makes bearing-temperature trend more informative than the instantaneous bearing temperature, while motor-winding temperature remains stable."
+        }
+      }
+    }
+  ]
+}

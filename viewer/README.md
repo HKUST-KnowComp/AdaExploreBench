@@ -1,6 +1,6 @@
 # AdaExploreBench Overview
 
-The official [GitHub Pages overview](https://hkust-knowcomp.github.io/AdaExploreBench/) compares eight models across the 256-episode benchmark. It displays full-dataset metrics, setting comparisons, and exploration analyses from one compressed aggregate file.
+The [project website](https://hkust-knowcomp.github.io/AdaExploreBench/) is published from `website/` and presents the benchmark publicly. This research viewer compares eight models across the 256-episode benchmark and runs locally. It displays full-dataset metrics, setting comparisons, and exploration analyses from one compressed aggregate file.
 
 ## Local preview
 
@@ -17,13 +17,15 @@ Open the URL printed by Vite, normally `http://127.0.0.1:8000`.
 
 `public/data/manifest.json.gz` contains the complete overview. Its `publication` contract records `mode: overview` and `model_count: 8`. Model summaries retain full-dataset branch aggregates, while episode and trajectory payloads are excluded.
 
-The workflow in `.github/workflows/deploy-pages.yml` validates the publication, tests the overview, builds the site, and deploys it to GitHub Pages after pushes to `main`.
+The publication can be validated, tested, and built locally:
 
 ```bash
 python viewer/validate_public_data.py --compressed
 npm --prefix viewer run test -- src/OverviewApp.test.tsx
 VITE_COMPRESSED_DATA=true npm --prefix viewer run build
 ```
+
+GitHub Pages deploys the static project website in `website/` via `.github/workflows/deploy-pages.yml`; the viewer is no longer part of the deployed site.
 
 ## Local result generation
 

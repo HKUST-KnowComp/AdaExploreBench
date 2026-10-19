@@ -1,0 +1,458 @@
+{
+  "schema_version": "adaexplorebench_site_data_v1",
+  "stats": [
+    {
+      "value": "256",
+      "label": "Test episodes",
+      "sub": "selected-256 dynamic split"
+    },
+    {
+      "value": "1,024",
+      "label": "Training episodes",
+      "sub": "same construction pipeline"
+    },
+    {
+      "value": "4",
+      "label": "Domains",
+      "sub": "finance · healthcare · cyber · manufacturing"
+    },
+    {
+      "value": "4",
+      "label": "Rule families",
+      "sub": "additive · conjunctive · disjunctive · lexicographic"
+    },
+    {
+      "value": "8",
+      "label": "Models evaluated",
+      "sub": "proprietary and open-source"
+    }
+  ],
+  "models": {
+    "Llama-3.1-8B": "open",
+    "Qwen3.5-9B": "open",
+    "Qwen3.8-27B": "open",
+    "Gemma-4-12B": "open",
+    "DeepSeek-V4.1-Flash": "open",
+    "GPT-6-Luna": "proprietary",
+    "GPT-6-Sol": "proprietary",
+    "Gemini-3.8-Flash": "proprietary"
+  },
+  "leaderboard": {
+    "metrics": [
+      {
+        "key": "ea",
+        "label": "EA (%)",
+        "full_label": "Exact Accuracy",
+        "better": "high",
+        "group": "End-to-end Outcome",
+        "highlight": true
+      },
+      {
+        "key": "ca",
+        "label": "CA (%)",
+        "full_label": "Calibrated Accuracy",
+        "better": "high",
+        "group": "End-to-end Outcome",
+        "highlight": true
+      },
+      {
+        "key": "probes",
+        "label": "Mean Uni. Probes",
+        "full_label": "Mean Unique Probes",
+        "better": null,
+        "group": "Exploration Behavior",
+        "highlight": false
+      },
+      {
+        "key": "reprobes",
+        "label": "Mean Re-probes",
+        "full_label": "Mean Re-probes after Change",
+        "better": null,
+        "group": "Exploration Behavior",
+        "highlight": false
+      },
+      {
+        "key": "factor_rec",
+        "label": "Factor Rec. (%)",
+        "full_label": "Factor Recognition",
+        "better": "high",
+        "group": "Adaptation Performance",
+        "highlight": true
+      },
+      {
+        "key": "change_rec",
+        "label": "Change Rec. (%)",
+        "full_label": "Change Recognition",
+        "better": "high",
+        "group": "Adaptation Performance",
+        "highlight": true
+      }
+    ],
+    "settings": [
+      {
+        "id": "default",
+        "label": "Default",
+        "description": "Rule drift occurs during the interaction, evaluation batches are masked, and the agent decides whether and how much to probe.",
+        "note": "8 models · main setting",
+        "rows": [
+          {
+            "model": "Gemini-3.8-Flash",
+            "kind": "proprietary",
+            "ea": 69.47,
+            "ca": 67.25,
+            "probes": 88.12,
+            "reprobes": 10.25,
+            "factor_rec": 78.3,
+            "change_rec": 63.68
+          },
+          {
+            "model": "GPT-6-Sol",
+            "kind": "proprietary",
+            "ea": 65.69,
+            "ca": 61.87,
+            "probes": 99.03,
+            "reprobes": 6.95,
+            "factor_rec": 73.79,
+            "change_rec": 47.56
+          },
+          {
+            "model": "DeepSeek-V4.1-Flash",
+            "kind": "open",
+            "ea": 58.01,
+            "ca": 52.87,
+            "probes": 113.42,
+            "reprobes": 16.04,
+            "factor_rec": 78.07,
+            "change_rec": 44.52
+          },
+          {
+            "model": "Qwen3.8-27B",
+            "kind": "open",
+            "ea": 45.95,
+            "ca": 37.73,
+            "probes": 42.2,
+            "reprobes": 5.46,
+            "factor_rec": 65.87,
+            "change_rec": 25.93
+          },
+          {
+            "model": "GPT-6-Luna",
+            "kind": "proprietary",
+            "ea": 46.5,
+            "ca": 35.1,
+            "probes": 22.84,
+            "reprobes": 0.73,
+            "factor_rec": 56.66,
+            "change_rec": 9.96
+          },
+          {
+            "model": "Gemma-4-12B",
+            "kind": "open",
+            "ea": 37.98,
+            "ca": 20.59,
+            "probes": 12.52,
+            "reprobes": 0.13,
+            "factor_rec": 53.21,
+            "change_rec": 10.34
+          },
+          {
+            "model": "Qwen3.5-9B",
+            "kind": "open",
+            "ea": 32.17,
+            "ca": 12.31,
+            "probes": 7.81,
+            "reprobes": 1.04,
+            "factor_rec": 39.4,
+            "change_rec": 13.8
+          },
+          {
+            "model": "Llama-3.1-8B",
+            "kind": "open",
+            "ea": 30.67,
+            "ca": 8.13,
+            "probes": 4.77,
+            "reprobes": 0.24,
+            "factor_rec": 52.54,
+            "change_rec": 6.3
+          }
+        ]
+      },
+      {
+        "id": "stationary",
+        "label": "Stationary",
+        "description": "Rule drift is removed while all other default conditions hold. Re-probes and recognition metrics are undefined.",
+        "note": "6 models · Gemini-3.8-Flash has no diagnostic runs",
+        "rows": [
+          {
+            "model": "DeepSeek-V4.1-Flash",
+            "kind": "open",
+            "ea": 69.19,
+            "ca": 67.6,
+            "probes": 85.36,
+            "reprobes": null,
+            "factor_rec": null,
+            "change_rec": null
+          },
+          {
+            "model": "Qwen3.8-27B",
+            "kind": "open",
+            "ea": 54.74,
+            "ca": 50.57,
+            "probes": 33.31,
+            "reprobes": null,
+            "factor_rec": null,
+            "change_rec": null
+          },
+          {
+            "model": "GPT-6-Luna",
+            "kind": "proprietary",
+            "ea": 50.26,
+            "ca": 41.14,
+            "probes": 21.11,
+            "reprobes": null,
+            "factor_rec": null,
+            "change_rec": null
+          },
+          {
+            "model": "Gemma-4-12B",
+            "kind": "open",
+            "ea": 39.37,
+            "ca": 22.78,
+            "probes": 12.28,
+            "reprobes": null,
+            "factor_rec": null,
+            "change_rec": null
+          },
+          {
+            "model": "Qwen3.5-9B",
+            "kind": "open",
+            "ea": 32.15,
+            "ca": 12.41,
+            "probes": 6.76,
+            "reprobes": null,
+            "factor_rec": null,
+            "change_rec": null
+          },
+          {
+            "model": "Llama-3.1-8B",
+            "kind": "open",
+            "ea": 30.9,
+            "ca": 8.74,
+            "probes": 4.53,
+            "reprobes": null,
+            "factor_rec": null,
+            "change_rec": null
+          }
+        ]
+      },
+      {
+        "id": "evidence-given",
+        "label": "Evidence Given",
+        "description": "Evaluation batches are unmasked, so evidence accumulates passively across the interaction.",
+        "note": "7 models · Gemini-3.8-Flash omitted",
+        "rows": [
+          {
+            "model": "DeepSeek-V4.1-Flash",
+            "kind": "open",
+            "ea": 71.51,
+            "ca": 70.34,
+            "probes": 119.28,
+            "reprobes": 6.38,
+            "factor_rec": 79.92,
+            "change_rec": 43.65
+          },
+          {
+            "model": "GPT-6-Sol",
+            "kind": "proprietary",
+            "ea": 68.51,
+            "ca": 66.57,
+            "probes": 79.08,
+            "reprobes": 2.55,
+            "factor_rec": 76.41,
+            "change_rec": 44.4
+          },
+          {
+            "model": "GPT-6-Luna",
+            "kind": "proprietary",
+            "ea": 56.93,
+            "ca": 51.53,
+            "probes": 23.92,
+            "reprobes": 0.34,
+            "factor_rec": 59.73,
+            "change_rec": 9.91
+          },
+          {
+            "model": "Gemma-4-12B",
+            "kind": "open",
+            "ea": 48.1,
+            "ca": 36.52,
+            "probes": 7.0,
+            "reprobes": 0.0,
+            "factor_rec": 50.34,
+            "change_rec": 12.1
+          },
+          {
+            "model": "Qwen3.8-27B",
+            "kind": "open",
+            "ea": 35.73,
+            "ca": 33.78,
+            "probes": 17.36,
+            "reprobes": 0.08,
+            "factor_rec": 62.65,
+            "change_rec": 13.85
+          },
+          {
+            "model": "Qwen3.5-9B",
+            "kind": "open",
+            "ea": 43.3,
+            "ca": 28.18,
+            "probes": 4.72,
+            "reprobes": 0.29,
+            "factor_rec": 40.91,
+            "change_rec": 15.39
+          },
+          {
+            "model": "Llama-3.1-8B",
+            "kind": "open",
+            "ea": 34.13,
+            "ca": 13.78,
+            "probes": 4.87,
+            "reprobes": 0.41,
+            "factor_rec": 52.55,
+            "change_rec": 5.32
+          }
+        ]
+      },
+      {
+        "id": "forced-probe",
+        "label": "Forced-Probe",
+        "description": "Probing is mandatory in every exploration window, with a minimum number of probe cases required.",
+        "note": "7 models · Gemini-3.8-Flash omitted",
+        "rows": [
+          {
+            "model": "GPT-6-Sol",
+            "kind": "proprietary",
+            "ea": 59.89,
+            "ca": 53.99,
+            "probes": 120.44,
+            "reprobes": 5.02,
+            "factor_rec": 73.61,
+            "change_rec": 50.66
+          },
+          {
+            "model": "DeepSeek-V4.1-Flash",
+            "kind": "open",
+            "ea": 57.98,
+            "ca": 53.27,
+            "probes": 133.05,
+            "reprobes": 18.68,
+            "factor_rec": 78.54,
+            "change_rec": 48.91
+          },
+          {
+            "model": "Qwen3.8-27B",
+            "kind": "open",
+            "ea": 47.98,
+            "ca": 38.69,
+            "probes": 58.09,
+            "reprobes": 8.01,
+            "factor_rec": 66.34,
+            "change_rec": 38.7
+          },
+          {
+            "model": "GPT-6-Luna",
+            "kind": "proprietary",
+            "ea": 44.77,
+            "ca": 32.27,
+            "probes": 68.04,
+            "reprobes": 2.31,
+            "factor_rec": 59.6,
+            "change_rec": 14.01
+          },
+          {
+            "model": "Gemma-4-12B",
+            "kind": "open",
+            "ea": 38.96,
+            "ca": 22.02,
+            "probes": 26.25,
+            "reprobes": 5.37,
+            "factor_rec": 52.1,
+            "change_rec": 9.59
+          },
+          {
+            "model": "Qwen3.5-9B",
+            "kind": "open",
+            "ea": 33.59,
+            "ca": 14.32,
+            "probes": 17.46,
+            "reprobes": 4.41,
+            "factor_rec": 38.66,
+            "change_rec": 12.76
+          },
+          {
+            "model": "Llama-3.1-8B",
+            "kind": "open",
+            "ea": 27.83,
+            "ca": 4.07,
+            "probes": 19.81,
+            "reprobes": 2.05,
+            "factor_rec": 51.1,
+            "change_rec": 7.74
+          }
+        ]
+      }
+    ]
+  },
+  "takeaways": [
+    {
+      "group": "results",
+      "statement": "Proactive and adaptive exploration remains highly challenging for most models.",
+      "summary": "All eight models finish below 70% calibrated accuracy. Gemini-3.8-Flash leads at 67.25%, and the gap between exact and calibrated accuracy widens from roughly 2–5 points for the top three models to 8–22 points for the rest, so weaker agents also make more costly mistakes."
+    },
+    {
+      "group": "results",
+      "statement": "Greater exploration and verification effort do not necessarily translate into better end-to-end performance across models.",
+      "summary": "DeepSeek-V4.1-Flash issues about 24 times as many probes as Llama-3.1-8B, yet its calibrated accuracy trails Gemini-3.8-Flash and GPT-6-Sol. It also performs more post-change re-probes than either model without closing the gap."
+    },
+    {
+      "group": "results",
+      "statement": "Adaptation ability distinguishes effective agents more clearly than exploration efforts.",
+      "summary": "The four strongest models by calibrated accuracy rank in exactly the same order on Change Recognition, while exploration effort does not separate performance as consistently."
+    },
+    {
+      "group": "analysis",
+      "statement": "Removing unannounced rule drift significantly recovers agents' end-to-end outcome.",
+      "summary": "The Stationary setting raises calibrated accuracy by as much as 14.7 points for DeepSeek-V4.1-Flash and by 6.2 points on average. The weakest models gain less than one point, so removing drift alone cannot compensate for weak rule learning."
+    },
+    {
+      "group": "analysis",
+      "statement": "Agents exploit effectively when sufficient evidence is provided externally.",
+      "summary": "Six of seven models improve under Evidence Given, four by more than 15 calibrated-accuracy points. The gains identify proactive evidence acquisition, rather than reasoning from available evidence, as a key bottleneck."
+    },
+    {
+      "group": "analysis",
+      "statement": "Effective exploration depends more on explored evidence quality than quantity.",
+      "summary": "Forced-Probe lifts mean unique probes from 33.9 to 53.8 and increases re-probing, yet mean calibrated accuracy falls by 2.0 points. More probes do not help when the selected cases are uninformative."
+    },
+    {
+      "group": "error",
+      "statement": "Rule Drift causes an immediate performance drop, and no model recovers at last.",
+      "summary": "Every model above the random floor loses on average 26.9 calibrated-accuracy points at the first post-change batch. Averaged over the final two batches, all six remain 6.9–19.2 points below their own pre-change plateau."
+    },
+    {
+      "group": "error",
+      "statement": "Re-probing provides additional evidence, but successful adaptation also depends on how effectively a model exploit evidence.",
+      "summary": "Re-probing correlates with Change Recognition within each model, but the cross-model correlation disappears after normalizing by pre-change exploration. Agents differ in how well they interpret before-and-after observations and revise their hypotheses."
+    },
+    {
+      "group": "error",
+      "statement": "Agents tend to settle on incomplete representations of environmental dynamics.",
+      "summary": "Precision exceeds recall for both Factor and Change Recognition, and in 36.3% of eligible episodes agents report identical pre- and post-change assessments despite an actual change. Plausible but incomplete rules often go unchallenged."
+    },
+    {
+      "group": "error",
+      "statement": "Agents struggle to recognize changes in how existing factors influence outcomes.",
+      "summary": "Agents identify both replacements but miss the direction reversal in 17.7% of episodes, compared with only 4.1% for the converse. Updating which factors matter is easier than revising how an existing factor affects the outcome."
+    }
+  ]
+}

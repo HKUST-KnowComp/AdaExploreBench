@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AdaExploreBench</title>
+  <meta name="description"
+    content="AdaExploreBench benchmarks LLM agents on proactive exploration and test-time adaptation in evolving environments with hidden rules and unannounced rule drift." />
+  <meta name="theme-color" content="#0f766e" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="AdaExploreBench" />
+  <meta property="og:description"
+    content="Benchmarking LLM agents for proactive exploration and test-time adaptation in evolving environments." />
+  <meta property="og:image" content="./assets/figures/overview.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&amp;family=Manrope:wght@400;500;600;700;800&amp;family=IBM+Plex+Mono:wght@400;500&amp;display=swap"
+    rel="stylesheet" />
+  <link rel="icon" href="./assets/favicon.svg?v=20261019-02" type="image/svg+xml" />
+  <link rel="stylesheet" href="./style.css?v=20261019-02" />
+</head>
+
+<body id="top">
+  <header class="site-header">
+    <div class="container nav-row">
+      <a class="brand" href="#top" aria-label="AdaExploreBench home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="12" cy="12" r="8.25" stroke="currentColor" stroke-width="1.6" />
+            <path d="M15.6 8.4L13.3 13.3L8.4 15.6L10.7 10.7L15.6 8.4Z" stroke="currentColor" stroke-width="1.6"
+              stroke-linejoin="round" />
+            <circle cx="12" cy="12" r="1.15" fill="currentColor" />
+          </svg>
+        </span>
+        <span class="brand-text">AdaExploreBench</span>
+      </a>
+      <div class="nav-main">
+        <nav class="site-nav" aria-label="Paper sections">
+          <a href="#motivation">Motivation</a>
+          <a href="#benchmark">Overview</a>
+          <a href="#leaderboard">Leaderboard</a>
+          <a href="#findings">Analysis</a>
+        </nav>
+        <div class="nav-actions" aria-label="Utilities">
+          <a class="nav-cta nav-cta-primary" href="#explore">Explore Data</a>
+          <a class="nav-cta nav-cta-cite" href="#bibtex">Cite</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="container">
+        <div class="hero-heading">
+          <div class="badge-row">
+            <span class="chip chip-accent">
+              <svg viewBox="0 0 24 24" class="chip-icon-svg" fill="none" xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true">
+                <circle cx="12" cy="12" r="7.75" stroke="currentColor" stroke-width="1.8" />
+                <path d="M15.35 8.65L13.05 13.05L8.65 15.35L10.95 10.95L15.35 8.65Z" stroke="currentColor"
+                  stroke-width="1.8" stroke-linejoin="round" />
+                <circle cx="12" cy="12" r="1" fill="currentColor" />
+              </svg>
+              <span>Proactive exploration</span>
+            </span>
+            <span class="chip">
+              <svg viewBox="0 0 24 24" class="chip-icon-svg" fill="none" xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true">
+                <path d="M7.25 7.75H16.75C18.68 7.75 20.25 9.32 20.25 11.25V12" stroke="currentColor"
+                  stroke-width="1.8" stroke-linecap="round" />
+                <path d="M9.2 4.7L7.15 7.75L9.2 10.8" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M16.75 16.25H7.25C5.32 16.25 3.75 14.68 3.75 12.75V12" stroke="currentColor"
+                  stroke-width="1.8" stroke-linecap="round" />
+                <path d="M14.8 19.3L16.85 16.25L14.8 13.2" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <span>Test-time adaptation</span>
+            </span>
+            <span class="chip">
+              <svg viewBox="0 0 24 24" class="chip-icon-svg" fill="none" xmlns="http://www.w3.org/2000/svg"
+                aria-hidden="true">
+                <path d="M12 4.25L19.25 7.75L12 11.25L4.75 7.75L12 4.25Z" stroke="currentColor" stroke-width="1.8"
+                  stroke-linejoin="round" />
+                <path d="M4.75 12L12 15.5L19.25 12" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M4.75 16.25L12 19.75L19.25 16.25" stroke="currentColor" stroke-width="1.8"
+                  stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <span>Evolving environments</span>
+            </span>
+          </div>
+          <h1 class="hero-title"><span class="gradient-text">AdaExploreBench</span></h1>
+          <p class="hero-subtitle">
+            Benchmarking LLM Agents for <span class="gradient-text">Proactive Exploration</span> and
+            <span class="gradient-text">Test-time Adaptation</span> in Evolving Environments
+          </p>
+        </div>
+
+        <div class="hero-grid">
+          <div class="hero-copy">
+            <div class="hero-meta" aria-label="Authors and affiliations">
+              <div class="hero-meta-row">
+                <span class="hero-meta-label">Authors</span>
+                <div class="hero-meta-value author-list">
+                  <span>Rui Wang<span class="equal-mark">*</span><sup>1,3</sup></span><span>Zishen
+                    Lai<span class="equal-mark">*</span><sup>2</sup></span><span>Jiayu
+                    Liu<span class="equal-mark">*</span><sup>1,3</sup></span><span>Cheng
+                    Qian<sup>4</sup></span><span>Jeonghwan Kim<sup>4</sup></span><span>Heng
+                    Wang<sup>4</sup></span><span>Xuejun Zhang<sup>4</sup></span><span>Jiateng
+                    Liu<sup>4</sup></span><span>Bingxuan Li<sup>4</sup></span><span>Shujin
+                    Wu<sup>4</sup></span><span>Qing Zong<sup>1</sup></span><span>Tianshi
+                    Zheng<sup>1</sup></span><span>Chunyang Li<sup>1</sup></span><span>Qihan
+                    Lin<sup>3</sup></span><span>Chen Li<sup>6</sup></span><span>Dadi
+                    Guo<sup>1</sup></span><span>Xiusi Chen<sup>5</sup></span><span>Yangqiu
+                    Song<sup>1</sup></span>
+                </div>
+              </div>
+              <div class="hero-meta-row">
+                <span class="hero-meta-label">Affiliations</span>
+                <div class="hero-meta-value affiliation-list">
+                  <span><sup>1</sup> HKUST</span>
+                  <span><sup>2</sup> HKUST(GZ)</span>
+                  <span><sup>3</sup> HKUST-UGAIL</span>
+                  <span><sup>4</sup> UIUC</span>
+                  <span><sup>5</sup> CUHK</span>
+                  <span><sup>6</sup> CMU</span>
+                  <span class="equal-note">* Equal contribution</span>
+                </div>
+              </div>
+            </div>
+            <div class="hero-abstract">
+              <p>
+                <strong class="abstract-emphasis">AdaExploreBench</strong> evaluates whether LLM agents can
+                proactively explore unfamiliar decision environments to discover hidden rules, and adapt when
+                those rules drift without announcement.
+              </p>
+            </div>
+            <div class="link-row">
+              <a class="btn btn-accent" href="./assets/AdaExploreBench.pdf" target="_blank" rel="noopener">
+                <svg class="btn-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true">
+                  <path d="M6.75 3.75H13.5L18.25 8.5V20.25H6.75V3.75Z" stroke="currentColor" stroke-width="1.7"
+                    stroke-linejoin="round" />
+                  <path d="M13.25 3.75V8.75H18.25M9.25 12.5H15.25M9.25 15.75H13.75" stroke="currentColor"
+                    stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                Paper
+              </a>
+              <a class="btn btn-primary" href="https://github.com/HKUST-KnowComp/AdaExploreBench" target="_blank"
+                rel="noopener">
+                <img class="btn-icon" src="./assets/logos/github-logo.png" alt="" aria-hidden="true" />
+                Code
+              </a>
+              <a class="btn btn-primary" href="https://huggingface.co/datasets/Roryaccout/AdaExploreBench"
+                target="_blank" rel="noopener">
+                <img class="btn-icon" src="./assets/logos/hf-logo.png" alt="" aria-hidden="true" />
+                Dataset
+              </a>
+            </div>
+          </div>
+
+          <aside class="hero-panel">
+            <div class="panel-card">
+              <span class="panel-kicker">Benchmark at a glance</span>
+              <ul class="hero-points">
+                <li>256 evaluation and 1,024 training episodes across four operational domains.</li>
+                <li>Four latent rule families: additive, conjunctive, disjunctive, and lexicographic.</li>
+                <li>Twelve evaluation batches per episode; unannounced drift arrives after batch 5–7.</li>
+                <li>Agents design their own probes; evaluation history is masked by default.</li>
+                <li>Auxiliary assessments measure factor and change recognition without leaking into context.</li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-band" aria-label="Benchmark statistics">
+      <div class="container">
+        <div class="stats-grid" id="stats-grid"></div>
+      </div>
+    </section>
+
+    <section id="motivation" class="section">
+      <div class="container">
+        <h2 class="section-title"><span class="section-num">01</span> Motivation &amp; Abstract</h2>
+        <div class="overview-grid">
+          <div class="overview-text">
+            <p class="lead-paragraph">
+              Most benchmarks either hand the agent the evidence it needs, leak that evidence from the
+              environment, or keep the underlying environment fixed. <strong class="abstract-emphasis">
+              AdaExploreBench</strong> removes all three shortcuts: the agent must design its own probes,
+              infer a latent decision rule from utility feedback, and notice when a previously valid rule
+              stops explaining the outcomes.
+            </p>
+            <p>
+              Large Language Model (LLM) agents are increasingly deployed in unfamiliar and evolving
+              environments, requiring them to proactively explore, understand, and adapt to environmental
+              dynamics. However, existing benchmarks rarely test whether agents can proactively discover how
+              an environment works and adapt as it evolves. To address this gap, we introduce
+              AdaExploreBench, a benchmark for proactive exploration and test-time adaptation in evolving
+              environments. By instantiating environmental dynamics as hidden rules, AdaExploreBench requires
+              agents to actively acquire evidence and infer the rules.
+            </p>
+            <p>
+              Under implicit rule drift, the latent rule changes without announcement, requiring agents to
+              detect from degraded performance that prior knowledge is stale and re-explore. Experiments on
+              eight leading LLMs show that proactive and adaptive exploration remain challenging:
+              GPT-6-Sol achieves only 61.9% calibrated accuracy, while providing sufficient evidence or
+              removing rule drift improves average performance significantly by close to 10%. These results
+              reveal a critical bottleneck in current LLM agents: they can often reason effectively from
+              informative evidence once it is available, but struggle to actively acquire the right evidence
+              and recognize when previously acquired evidence is no longer valid.
+            </p>
+          </div>
+
+          <div class="motivation-stack">
+            <article class="motivation-card">
+              <div class="mini-card-head">
+                <span class="mini-card-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" class="mini-card-icon-svg" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="7.25" stroke="currentColor" stroke-width="1.8" />
+                    <path d="M15.15 8.85L12.9 12.9L8.85 15.15L11.1 11.1L15.15 8.85Z" stroke="currentColor"
+                      stroke-width="1.8" stroke-linejoin="round" />
+                  </svg>
+                </span>
+                <h3>Proactive exploration</h3>
+              </div>
+              <p>
+                Agents decide when, what, and how much to probe. No task-completion objective points to the
+                relevant fields, and no evidence is supplied before the agent asks for it.
+              </p>
+            </article>
+            <article class="motivation-card">
+              <div class="mini-card-head">
+                <span class="mini-card-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" class="mini-card-icon-svg" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M6.5 8.5H13.25L15.5 6.25M15.5 17.5H8.75L6.5 15.25" stroke="currentColor"
+                      stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M6.5 5.75V8.5M6.5 17.5V15.25" stroke="currentColor" stroke-width="1.8"
+                      stroke-linecap="round" />
+                    <path d="M17.5 15.5V12.25M17.5 8.75V6.5" stroke="currentColor" stroke-width="1.8"
+                      stroke-linecap="round" />
+                  </svg>
+                </span>
+                <h3>Unannounced rule drift</h3>
+              </div>
+              <p>
+                Latent rules change within the same family without notification. Agents must detect that
+                prior knowledge is stale, then re-explore and revise their hypotheses.
+              </p>
+            </article>
+            <article class="motivation-card">
+              <div class="mini-card-head">
+                <span class="mini-card-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" class="mini-card-icon-svg" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.75 18.25V5.75M4.75 18.25H19.25" stroke="currentColor" stroke-width="1.8"
+                      stroke-linecap="round" />
+                    <path d="M7.75 15.5L10.75 11.25L13.5 13.5L18.25 7.25" stroke="currentColor"
+                      stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                    <path d="M15.75 7.25H18.25V9.75" stroke="currentColor" stroke-width="1.8"
+                      stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+                <h3>In-process evaluation</h3>
+              </div>
+              <p>
+                Evaluation cases arrive in small batches, producing a performance curve over the whole
+                interaction rather than a single aggregate end score.
+              </p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="benchmark" class="section section-alt">
+      <div class="container">
+        <h2 class="section-title"><span class="section-num">02</span> Benchmark Overview</h2>
+        <div class="overview-figure-block">
+          <div class="figure-card main-figure-card figure-only-card">
+            <img src="./assets/figures/overview.png"
+              alt="AdaExploreBench overview showing data construction, the runtime protocol, and an example trajectory across an unannounced rule change."
+              class="main-figure-image" />
+            <div class="embedded-note">
+              <div class="embedded-note-head">
+                <span class="mini-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" class="mini-icon-svg" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      d="M9 18.5H15M9.8 21H14.2M12 3.75C8.82436 3.75 6.25 6.32436 6.25 9.5C6.25 11.4351 7.20601 13.1468 8.67121 14.1886C9.39036 14.6999 9.75 15.4518 9.75 16.25V16.5H14.25V16.25C14.25 15.4518 14.6096 14.6999 15.3288 14.1886C16.794 13.1468 17.75 11.4351 17.75 9.5C17.75 6.32436 15.1756 3.75 12 3.75Z"
+                      stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                  </svg>
+                </span>
+                <div class="figure-label">How to read it</div>
+              </div>
+              <ul class="plain-list compact-list">
+                <li>Data construction: how field catalogs, constraints, and latent dynamics become validated
+                  episodes.</li>
+                <li>Runtime protocol: how probe windows, action batches, feedback, and auxiliary assessments
+                  interleave.</li>
+                <li>Example trajectory: how one episode unfolds before, during, and after the rule change.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-grid benchmark-card-grid">
+          <article class="card">
+            <div class="mini-card-head">
+              <span class="mini-card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" class="mini-card-icon-svg" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M5.5 6.75H18.5V17.25H5.5V6.75Z" stroke="currentColor" stroke-width="1.8"
+                    stroke-linejoin="round" />
+                  <path d="M9 6.75V17.25M14.75 10.5H18.5M14.75 13.75H18.5" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+              </span>
+              <div class="mini-card-copy">
+                <div class="card-tag">Data Construction</div>
+                <h3>Validated episodes across four domains</h3>
+              </div>
+            </div>
+            <p>
+              Episodes span finance, healthcare, cybersecurity, and manufacturing, with every domain covering
+              all four rule families. An LLM-assisted pipeline builds field catalogs and latent dynamics, then
+              filters candidates through structural, numerical, and semantic validation and a review of field
+              realism, change plausibility, and distractor quality. The release contains 256 test and 1,024
+              training episodes.
+            </p>
+          </article>
+          <article class="card">
+            <div class="mini-card-head">
+              <span class="mini-card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" class="mini-card-icon-svg" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M7 7.25H11V11.25H7V7.25Z" stroke="currentColor" stroke-width="1.8"
+                    stroke-linejoin="round" />
+                  <path d="M13 12.75H17V16.75H13V12.75Z" stroke="currentColor" stroke-width="1.8"
+                    stroke-linejoin="round" />
+                  <path d="M11 9.25H14C15.66 9.25 17 10.59 17 12.25V12.75" stroke="currentColor"
+                    stroke-width="1.8" stroke-linecap="round" />
+                </svg>
+              </span>
+              <div class="mini-card-copy">
+                <div class="card-tag">Runtime Protocol</div>
+                <h3>Probe, decide, observe</h3>
+              </div>
+            </div>
+            <p>
+              Each episode alternates exploration windows with evaluation batches. Agents may design probe
+              cases and observe utilities for all four actions, or request the next batch. They then submit
+              actions for the revealed cases and receive utility feedback. Evaluation history is masked by
+              default, while probe observations and realized utilities remain in context; a calculator
+              supports numerical reasoning.
+            </p>
+          </article>
+          <article class="card">
+            <div class="mini-card-head">
+              <span class="mini-card-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" class="mini-card-icon-svg" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 3.75L18 6V11.25C18 14.86 15.71 18.14 12 19.5C8.29 18.14 6 14.86 6 11.25V6L12 3.75Z"
+                    stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" />
+                  <path d="M9.25 11.75L11.25 13.75L14.75 10.25" stroke="currentColor" stroke-width="1.8"
+                    stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+              <div class="mini-card-copy">
+                <div class="card-tag">Rule Drift &amp; Assessment</div>
+                <h3>Within-family change, measured separately</h3>
+              </div>
+            </div>
+            <p>
+              Drift stays within the family: one relevant factor is replaced and another factor's direction
+              is reversed, without announcement. Auxiliary assessments before the change and at episode end
+              measure factor and change recognition. They are excluded from the interaction context, so they
+              diagnose understanding without supplying evidence.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="leaderboard" class="section">
+      <div class="container">
+        <h2 class="section-title"><span class="section-num">03</span> Leaderboard</h2>
+        <p class="explore-lead">
+          All four settings use the same episodes and four ordered actions. Rows are sorted by calibrated
+          accuracy within each setting.
+        </p>
+
+        <div class="results-shell leaderboard-shell">
+          <div class="leaderboard-head">
+            <div>
+              <p class="leaderboard-kicker">Main results</p>
+              <h3 class="panel-title">Calibrated accuracy by setting</h3>
+            </div>
+            <div class="leaderboard-legend" aria-label="Table legend">
+              <span class="legend-pill legend-pill-proprietary">Proprietary</span>
+              <span class="legend-pill legend-pill-open">Open-source</span>
+              <span class="legend-pill">Bold = best</span>
+              <span class="legend-pill">Underline = second</span>
+            </div>
+          </div>
+          <div id="leaderboard-tabs" class="tabs" role="tablist" aria-label="Evaluation settings"></div>
+          <div id="leaderboard-panels"></div>
+        </div>
+        <p class="leaderboard-footnote">
+          Bold and underline apply only to metrics where higher is better; probe counts are descriptive and
+          are never highlighted. Dashes mark metrics that are undefined in a setting.
+        </p>
+      </div>
+    </section>
+
+    <section id="findings" class="section section-alt">
+      <div class="container">
+        <h2 class="section-title"><span class="section-num">04</span> Findings &amp; Analysis</h2>
+        <p class="explore-lead">
+          Ten takeaways from the paper. Statements are quoted verbatim; each summary distills the supporting
+          paragraph.
+        </p>
+
+        <div class="takeaway-shell">
+          <div class="takeaway-grid">
+            <div class="takeaway-column">
+              <div class="takeaway-column-label">
+                <span class="soft-pill takeaway-label-pill takeaway-label-experiment">Results</span>
+              </div>
+              <div id="takeaway-results-stage" class="takeaway-stage" aria-live="polite"></div>
+              <div class="takeaway-nav">
+                <button id="takeaway-results-prev" class="takeaway-btn" type="button"
+                  aria-label="Previous results takeaway">Prev</button>
+                <div class="takeaway-progress">
+                  <div id="takeaway-results-counter" class="takeaway-counter"></div>
+                  <div id="takeaway-results-dots" class="takeaway-dots"
+                    aria-label="Results takeaway pagination"></div>
+                </div>
+                <button id="takeaway-results-next" class="takeaway-btn" type="button"
+                  aria-label="Next results takeaway">Next</button>
+              </div>
+            </div>
+
+            <div class="takeaway-column">
+              <div class="takeaway-column-label">
+                <span class="soft-pill takeaway-label-pill takeaway-label-analysis">Analysis</span>
+              </div>
+              <div id="takeaway-analysis-stage" class="takeaway-stage" aria-live="polite"></div>
+              <div class="takeaway-nav">
+                <button id="takeaway-analysis-prev" class="takeaway-btn" type="button"
+                  aria-label="Previous analysis takeaway">Prev</button>
+                <div class="takeaway-progress">
+                  <div id="takeaway-analysis-counter" class="takeaway-counter"></div>
+                  <div id="takeaway-analysis-dots" class="takeaway-dots"
+                    aria-label="Analysis takeaway pagination"></div>
+                </div>
+                <button id="takeaway-analysis-next" class="takeaway-btn" type="button"
+                  aria-label="Next analysis takeaway">Next</button>
+              </div>
+            </div>
+
+            <div class="takeaway-column">
+              <div class="takeaway-column-label">
+                <span class="soft-pill takeaway-label-pill takeaway-label-error">Error Analysis</span>
+              </div>
+              <div id="takeaway-error-stage" class="takeaway-stage" aria-live="polite"></div>
+              <div class="takeaway-nav">
+                <button id="takeaway-error-prev" class="takeaway-btn" type="button"
+                  aria-label="Previous error-analysis takeaway">Prev</button>
+                <div class="takeaway-progress">
+                  <div id="takeaway-error-counter" class="takeaway-counter"></div>
+                  <div id="takeaway-error-dots" class="takeaway-dots"
+                    aria-label="Error analysis takeaway pagination"></div>
+                </div>
+                <button id="takeaway-error-next" class="takeaway-btn" type="button"
+                  aria-label="Next error-analysis takeaway">Next</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="analysis-figure-grid">
+          <figure class="figure-card analysis-figure">
+            <div class="figure-heading">
+              <span class="figure-label">Diagnostic settings</span>
+              <h3>Calibrated accuracy across settings</h3>
+            </div>
+            <img src="./assets/figures/analysis.png"
+              alt="Bar chart of calibrated accuracy for Default, Stationary, Evidence Given, and Forced-Probe settings."
+              loading="lazy" />
+            <figcaption>
+              Calibrated accuracy under Default and the three diagnostic settings. Annotations give the
+              average CA gain over Default: +6.2 points with no rule drift, +9.4 with evaluation evidence
+              given, and −2.0 with mandatory probing. Gemini-3.8-Flash is omitted because it has no
+              diagnostic runs.
+            </figcaption>
+          </figure>
+          <figure class="figure-card analysis-figure">
+            <div class="figure-heading">
+              <span class="figure-label">Post-change trajectory</span>
+              <h3>Accuracy around rule drift</h3>
+            </div>
+            <img src="./assets/figures/error_analysis_ca_curve.png"
+              alt="Line chart of calibrated accuracy per evaluation batch around the rule change for eight models."
+              loading="lazy" />
+            <figcaption>
+              Calibrated accuracy per evaluation batch, aligned at rule drift with batch 0 as the final
+              pre-change batch. Accuracy drops immediately after the change and recovers only partially.
+            </figcaption>
+          </figure>
+        </div>
+      </div>
+    </section>
+
+    <section id="explore" class="section">
+      <div class="container">
+        <h2 class="section-title"><span class="section-num">05</span> Explore the Data</h2>
+        <p class="explore-lead">
+          Sample episodes from the test split. Switch domains to inspect the scenario, the four actions, the
+          field catalog, and representative pre-change cases.
+        </p>
+        <p class="explore-note">
+          The browser shows one episode per domain. The full dataset — 256 test and 1,024 training episodes —
+          is available on <a class="text-link"
+            href="https://huggingface.co/datasets/Roryaccout/AdaExploreBench" target="_blank"
+            rel="noopener">Hugging Face</a>.
+        </p>
+        <p id="utility-note" class="explore-note utility-note"></p>
+
+        <div id="explore-root">
+          <div id="domain-tabs" class="tabs" role="tablist" aria-label="Sample episode domains"></div>
+          <div id="domain-panels"></div>
+        </div>
+
+        <div id="explore-fallback" class="empty-state explore-fallback" hidden>
+          <h3>Sample episodes could not be loaded.</h3>
+          <p>
+            The interactive browser needs <code>assets/data/episodes.json</code>. Regenerate it with
+            <code>python3 website/scripts/build_data.py</code>, or browse the full release on
+            <a class="text-link" href="https://huggingface.co/datasets/Roryaccout/AdaExploreBench"
+              target="_blank" rel="noopener">Hugging Face</a>.
+          </p>
+        </div>
+
+        <noscript>
+          <div class="empty-state explore-fallback">
+            <h3>JavaScript is required for the sample browser.</h3>
+            <p>
+              The full dataset is available on
+              <a class="text-link" href="https://huggingface.co/datasets/Roryaccout/AdaExploreBench"
+                target="_blank" rel="noopener">Hugging Face</a>.
+            </p>
+          </div>
+        </noscript>
+      </div>
+    </section>
+
+    <section id="bibtex" class="section section-alt">
+      <div class="container">
+        <h2 class="section-title"><span class="section-num">06</span> Bibtex</h2>
+        <div class="citation-shell">
+          <div class="panel-head citation-head">
+            <p class="panel-sub">If you find <strong class="abstract-emphasis">AdaExploreBench</strong>
+              helpful, please kindly cite as:</p>
+            <button class="copy-citation-btn" id="copy-citation" type="button"
+              aria-label="Copy BibTeX citation">
+              <svg viewBox="0 0 24 24" class="copy-citation-icon" width="17" height="17" fill="none"
+                xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M8.25 8.25H17.25V17.25H8.25V8.25Z" stroke="currentColor" stroke-width="1.8"
+                  stroke-linejoin="round" />
+                <path
+                  d="M6.75 15.75H5.75C5.2 15.75 4.75 15.3 4.75 14.75V5.75C4.75 5.2 5.2 4.75 5.75 4.75H14.75C15.3 4.75 15.75 5.2 15.75 5.75V6.75"
+                  stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+              </svg>
+              <span>Copy</span>
+            </button>
+          </div>
+          <pre class="citation-block" id="citation-bibtex">@article{wang2026adaexplorebench,
+  title={AdaExploreBench: Benchmarking LLM Agents for Proactive Exploration and Test-time Adaptation in Evolving Environments},
+  author={Wang, Rui and Lai, Zishen and Liu, Jiayu and Qian, Cheng and Kim, Jeonghwan and Wang, Heng and Zhang, Xuejun and Liu, Jiateng and Li, Bingxuan and Wu, Shujin and Zong, Qing and Zheng, Tianshi and Li, Chunyang and Lin, Qihan and Li, Chen and Guo, Dadi and Chen, Xiusi and Song, Yangqiu},
+  note={Manuscript under review},
+  year={2026}
+}</pre>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-row">
+      <p>AdaExploreBench · HKUST-KnowComp</p>
+      <div class="footer-links">
+        <a href="https://github.com/HKUST-KnowComp/AdaExploreBench" target="_blank" rel="noopener">Code</a>
+        <a href="https://huggingface.co/datasets/Roryaccout/AdaExploreBench" target="_blank"
+          rel="noopener">Dataset</a>
+        <a href="./assets/AdaExploreBench.pdf" target="_blank" rel="noopener">Paper</a>
+        <a href="#top">Back to top</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./app.js?v=20261019-02"></script>
+</body>
+
+</html>

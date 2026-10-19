@@ -8,10 +8,10 @@
 
 [![Dataset](https://img.shields.io/badge/Dataset-1280%20Episodes-2c8c7d?style=for-the-badge)](https://huggingface.co/datasets/Roryaccout/AdaExploreBench)
 [![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](#-quick-start)
-[![Viewer](https://img.shields.io/badge/Interactive-Research%20Viewer-7463b8?style=for-the-badge)](https://hkust-knowcomp.github.io/AdaExploreBench/)
+[![Project Page](https://img.shields.io/badge/Project-Page-7463b8?style=for-the-badge)](https://hkust-knowcomp.github.io/AdaExploreBench/)
 [![GitHub](https://img.shields.io/badge/GitHub-Code-24292e?style=for-the-badge&logo=github)](https://github.com/HKUST-KnowComp/AdaExploreBench)
 
-[Overview](#-overview) · [Quick Start](#-quick-start) · [Dataset](#-dataset) · [Evaluation](#-evaluation) · [Viewer](#-interactive-viewer)
+[Overview](#-overview) · [Quick Start](#-quick-start) · [Dataset](#-dataset) · [Evaluation](#-evaluation) · [Project Website & Viewer](#-project-website--interactive-viewer)
 
 </div>
 
@@ -171,9 +171,11 @@ The diagnostic settings examine how performance depends on environmental changes
 
 Episode-level curves support closer analysis of performance around environmental changes. [View PDF](figures/error_analysis_ca_curve.pdf).
 
-## 🔎 Interactive Viewer
+## 🔎 Project Website & Interactive Viewer
 
-The [live overview](https://hkust-knowcomp.github.io/AdaExploreBench/) compares **eight models across all 256 benchmark episodes**. It presents decision quality, exploration behavior, factor recognition, change recognition, and diagnostic settings. The publication contains aggregate results in a single compressed file.
+The [project website](https://hkust-knowcomp.github.io/AdaExploreBench/) presents the benchmark overview, the leaderboard across all diagnostic settings, key findings, and an interactive browser for sample episodes.
+
+A research viewer for closer inspection runs locally. It compares **eight models across all 256 benchmark episodes**, presenting decision quality, exploration behavior, factor recognition, change recognition, and diagnostic settings. The publication contains aggregate results in a single compressed file.
 
 ```bash
 VITE_COMPRESSED_DATA=true npm --prefix viewer run dev
@@ -246,12 +248,14 @@ python -m pytest -q tests/runtime/test_conversation.py
 npm --prefix viewer run test -- src/OverviewApp.test.tsx
 ```
 
-Before deploying the viewer, validate its publication and build the production bundle:
+To validate and build the viewer publication for local or self-hosted use:
 
 ```bash
 python viewer/validate_public_data.py --compressed
 VITE_COMPRESSED_DATA=true npm --prefix viewer run build
 ```
+
+The public project website lives in [`website/`](website) and is deployed to GitHub Pages as-is on every push to `main`; regenerate its sample data with `python website/scripts/build_data.py`.
 
 ## 🤝 Contributing
 

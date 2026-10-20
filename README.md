@@ -8,9 +8,7 @@
 
 [![Paper](https://img.shields.io/badge/arXiv-2610.25950-b31b1b?style=for-the-badge&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2610.25950)
 [![Dataset](https://img.shields.io/badge/Dataset-1280%20Episodes-2c8c7d?style=for-the-badge)](https://huggingface.co/datasets/Roryaccout/AdaExploreBench)
-[![Python](https://img.shields.io/badge/Python-3.11%2B-3776AB?style=for-the-badge&logo=python&logoColor=white)](#-quick-start)
 [![Project Page](https://img.shields.io/badge/Project-Page-7463b8?style=for-the-badge)](https://hkust-knowcomp.github.io/AdaExploreBench/)
-[![GitHub](https://img.shields.io/badge/GitHub-Code-24292e?style=for-the-badge&logo=github)](https://github.com/HKUST-KnowComp/AdaExploreBench)
 [![X Post](https://img.shields.io/badge/X-Post-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/RuiWangRory/status/2112388542462915019)
 
 [Overview](#-overview) · [Quick Start](#-quick-start) · [Dataset](#-dataset) · [Evaluation](#-evaluation) · [Project Website & Viewer](#-project-website--interactive-viewer)

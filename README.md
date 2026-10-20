@@ -7,7 +7,8 @@
 **Design experiments. Discover hidden dynamics. Adapt when the environment changes.**
 
 [![Paper](https://img.shields.io/badge/arXiv-2610.25950-b31b1b?style=for-the-badge&logo=arxiv&logoColor=white)](https://arxiv.org/abs/2610.25950)
-[![Dataset](https://img.shields.io/badge/Dataset-1280%20Episodes-2c8c7d?style=for-the-badge)](https://huggingface.co/datasets/Roryaccout/AdaExploreBench)
+[![HF Paper](https://img.shields.io/badge/🤗_HF-Paper-FFD21E?style=for-the-badge)](https://huggingface.co/papers/2610.25950)
+[![Dataset](https://img.shields.io/badge/Dataset-Hugging_Face-2c8c7d?style=for-the-badge)](https://huggingface.co/datasets/Roryaccout/AdaExploreBench)
 [![Project Page](https://img.shields.io/badge/Project-Page-7463b8?style=for-the-badge)](https://hkust-knowcomp.github.io/AdaExploreBench/)
 [![X Post](https://img.shields.io/badge/X-Post-000000?style=for-the-badge&logo=x&logoColor=white)](https://x.com/RuiWangRory/status/2112388542462915019?s=20)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Post-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/posts/rui-wang-39900537a_introducing-adaexplorebench-benchmarking-ugcPost-7518166611292221440-0RQ_/)

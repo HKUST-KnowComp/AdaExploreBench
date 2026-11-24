@@ -262,3 +262,7 @@ The public project website lives in [`website/`](website) and is deployed to Git
 ## 🤝 Contributing
 
 Issues and pull requests are welcome for bug fixes, model integrations, and benchmark extensions. Include the affected configuration and a reproducible example when reporting a problem.
+
+## 📄 License
+
+AdaExploreBench is released under the [MIT License](LICENSE). This covers the source code, prompts and templates, and the dataset files published on Hugging Face.

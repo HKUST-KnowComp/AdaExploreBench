@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "adaexplorebench"
 version = "6.0.0"
 description = "AdaExploreBench static and dynamic rule-induction benchmark"
+license = { text = "MIT" }
 requires-python = ">=3.11"
 dependencies = [
     "httpx>=0.27",
